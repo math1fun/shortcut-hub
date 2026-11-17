@@ -1,0 +1,2140 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>업무 단축키 모음 | 상무고 유환수</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+/* ===== GLOBAL BASE ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+/* ===== INTRO SCREEN ===== */
+#intro-screen {
+  position: fixed; inset: 0; z-index: 9999;
+  background: #050810;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  overflow: hidden;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+#intro-screen.fade-out {
+  opacity: 0; visibility: hidden; pointer-events: none;
+}
+
+.intro-bg {
+  position: absolute; inset: 0;
+  background: 
+    radial-gradient(ellipse 80% 50% at 20% 50%, rgba(14,165,233,0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 80% 30%, rgba(168,85,247,0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 80% at 60% 80%, rgba(249,115,22,0.10) 0%, transparent 60%);
+  animation: bgPulse 4s ease-in-out infinite;
+}
+@keyframes bgPulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+.intro-grid {
+  position: absolute; inset: 0;
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: gridShift 6s linear infinite;
+  transform: perspective(800px) rotateX(20deg) scale(1.2);
+  transform-origin: center bottom;
+}
+@keyframes gridShift {
+  from { background-position: 0 0; }
+  to { background-position: 0 60px; }
+}
+
+.intro-particles {
+  position: absolute; inset: 0; overflow: hidden;
+  pointer-events: none;
+}
+.intro-particle {
+  position: absolute;
+  border-radius: 50%;
+  animation: floatUp linear infinite;
+}
+@keyframes floatUp {
+  from { transform: translateY(110vh) translateX(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 0.8; }
+  to { transform: translateY(-10vh) translateX(var(--drift, 0px)); opacity: 0; }
+}
+
+.intro-scanline {
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 3px,
+    rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px
+  );
+  pointer-events: none;
+}
+
+.intro-content {
+  position: relative; z-index: 10;
+  text-align: center; padding: 0 20px;
+  max-width: 800px;
+}
+
+.intro-eyebrow {
+  font-family: 'Orbitron', monospace;
+  font-size: 11px; letter-spacing: 0.45em;
+  color: rgba(14,165,233,0.8);
+  text-transform: uppercase;
+  margin-bottom: 32px;
+  opacity: 0;
+  animation: fadeUp 0.7s ease forwards 0.4s;
+}
+
+.intro-title {
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.03em;
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: fadeUp 0.9s ease forwards 0.7s;
+}
+.intro-title .t1 {
+  display: block;
+  font-size: clamp(60px, 13vw, 118px);
+  line-height: 1.05;
+  background: linear-gradient(135deg, #e8f4ff 0%, #38bdf8 40%, #a855f7 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  filter: drop-shadow(0 0 40px rgba(14,165,233,0.4));
+  padding-bottom: 4px;
+}
+.intro-title .t2 {
+  display: block;
+  font-size: clamp(38px, 8.5vw, 82px);
+  line-height: 1.05;
+  color: rgba(255,255,255,0.75);
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+
+.intro-sub {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: clamp(12px, 2vw, 16px); font-weight: 300;
+  color: rgba(255,255,255,0.38);
+  letter-spacing: 0.12em;
+  margin-bottom: 44px;
+  opacity: 0;
+  animation: fadeUp 0.7s ease forwards 1.1s;
+}
+
+.intro-apps {
+  display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+  margin-bottom: 48px;
+  opacity: 0;
+  animation: fadeUp 0.7s ease forwards 1.4s;
+}
+.intro-app-tag {
+  padding: 7px 16px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 100px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 12px; font-weight: 500;
+  color: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(8px);
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.intro-nav-section {
+  opacity: 0;
+  animation: fadeUp 0.7s ease forwards 1.7s;
+}
+.intro-nav-label {
+  font-family: 'Orbitron', monospace;
+  font-size: 10px; letter-spacing: 0.35em;
+  color: rgba(255,255,255,0.22);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.intro-nav-btns {
+  display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+}
+.intro-nav-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 22px 20px 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(16px);
+  cursor: pointer;
+  transition: all 0.28s cubic-bezier(0.34,1.56,0.64,1);
+  min-width: 96px;
+  position: relative; overflow: hidden;
+}
+.intro-nav-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, var(--btn-color) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.intro-nav-btn::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--btn-color), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.intro-nav-btn:hover::before { opacity: 0.18; }
+.intro-nav-btn:hover::after { opacity: 1; }
+.intro-nav-btn:hover {
+  border-color: color-mix(in srgb, var(--btn-color) 50%, transparent);
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.5), 0 0 28px color-mix(in srgb, var(--btn-color) 25%, transparent);
+}
+.intro-nav-btn:active { transform: translateY(-3px) scale(1.01); transition-duration: 0.1s; }
+
+.intro-nav-btn .btn-icon-wrap {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--btn-color) 14%, rgba(255,255,255,0.04));
+  border: 1px solid color-mix(in srgb, var(--btn-color) 28%, transparent);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; z-index: 1;
+  transition: all 0.28s;
+  flex-shrink: 0;
+}
+.intro-nav-btn:hover .btn-icon-wrap {
+  background: color-mix(in srgb, var(--btn-color) 22%, rgba(255,255,255,0.06));
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--btn-color) 35%, transparent);
+}
+.intro-nav-btn .btn-icon-wrap svg {
+  width: 22px; height: 22px;
+  color: var(--btn-color);
+  transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1);
+}
+.intro-nav-btn:hover .btn-icon-wrap svg { transform: scale(1.15); }
+
+.intro-nav-btn .btn-label {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 11.5px; font-weight: 600;
+  color: rgba(255,255,255,0.6);
+  white-space: nowrap;
+  position: relative; z-index: 1;
+  transition: color 0.2s;
+  letter-spacing: 0.01em;
+}
+.intro-nav-btn:hover .btn-label { color: #fff; }
+
+.intro-nav-btn .btn-sub {
+  font-family: 'Orbitron', monospace;
+  font-size: 8px; font-weight: 400;
+  color: var(--btn-color);
+  opacity: 0.5;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  position: relative; z-index: 1;
+  transition: opacity 0.2s;
+  margin-top: -4px;
+}
+.intro-nav-btn:hover .btn-sub { opacity: 0.9; }
+
+/* ===== HOME BUTTON in nav ===== */
+.nav-home-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 14px 6px 10px;
+  border-radius: 9px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.5);
+  font-family: 'Orbitron', monospace;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.2em;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-right: 10px;
+  transition: all 0.2s;
+  position: relative; overflow: hidden;
+}
+.nav-home-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(14,165,233,0.15), rgba(168,85,247,0.1));
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.nav-home-btn:hover { border-color: rgba(14,165,233,0.4); color: #fff; }
+.nav-home-btn:hover::before { opacity: 1; }
+.nav-home-btn svg {
+  width: 14px; height: 14px;
+  flex-shrink: 0;
+  position: relative; z-index: 1;
+  color: #38bdf8;
+  transition: transform 0.2s;
+}
+.nav-home-btn:hover svg { transform: rotate(-15deg) scale(1.1); }
+.nav-home-btn span { position: relative; z-index: 1; }
+
+.intro-credit {
+  margin-top: 36px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 12px; font-weight: 300;
+  color: rgba(255,255,255,0.22);
+  letter-spacing: 0.18em;
+  opacity: 0;
+  animation: fadeUp 0.7s ease forwards 2.1s;
+}
+.intro-credit strong { color: rgba(255,255,255,0.5); font-weight: 600; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== MAIN APP ===== */
+#main-app {
+  min-height: 100vh;
+  background: #0f1923;
+  transition: background 0.4s ease;
+  opacity: 0;
+  transition: opacity 0.6s ease, background 0.4s ease;
+}
+#main-app.visible { opacity: 1; }
+
+/* ===== TOP NAV ===== */
+#top-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  height: 56px;
+  background: rgba(8,11,18,0.94);
+  backdrop-filter: blur(28px) saturate(200%);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  display: flex; align-items: center;
+  padding: 0 16px; gap: 6px;
+  overflow-x: auto;
+}
+#top-nav::-webkit-scrollbar { height: 0; }
+
+.nav-brand-spacer { width: 0; }
+
+.tab-btn {
+  display: flex; align-items: center; gap: 7px;
+  padding: 7px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: transparent;
+  color: rgba(255,255,255,0.45);
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 12.5px; font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap; flex-shrink: 0;
+  transition: all 0.2s;
+  position: relative; overflow: hidden;
+}
+.tab-btn::after {
+  content: '';
+  position: absolute; bottom: 0; left: 10%; right: 10%; height: 2px;
+  background: var(--tab-color);
+  border-radius: 2px 2px 0 0;
+  transform: scaleX(0); transform-origin: center;
+  transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+.tab-btn:hover {
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.75);
+  border-color: rgba(255,255,255,0.13);
+}
+.tab-btn.active {
+  background: color-mix(in srgb, var(--tab-color) 12%, transparent);
+  border-color: color-mix(in srgb, var(--tab-color) 35%, transparent);
+  color: #fff;
+}
+.tab-btn.active::after { transform: scaleX(1); }
+
+/* ===== PAGE CONTAINERS ===== */
+.page-container {
+  display: none;
+  padding-top: 56px;
+  min-height: 100vh;
+}
+.page-container.active {
+  display: block;
+  animation: pageReveal 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+@keyframes pageReveal {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== ACTION BAR (print only) ===== */
+#action-bar {
+  position: fixed; top: 56px; left: 0; right: 0; z-index: 999;
+  height: 40px;
+  background: rgba(8,11,18,0.88);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  display: flex; align-items: center;
+  padding: 0 16px; gap: 8px;
+}
+.action-print-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 14px;
+  border-radius: 7px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.55);
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 12px; font-weight: 500;
+  cursor: pointer; white-space: nowrap;
+  transition: all 0.18s;
+}
+.action-print-btn:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.22);
+  color: #fff;
+}
+.action-print-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+/* ===== INNER PAGE CONTENT ===== */
+.page-inner {
+  padding: 16px 0 80px;
+}
+.page-container { padding-top: 96px; } /* nav 56px + action-bar 40px */
+.page-inner .topbar { display: none !important; }
+.page-inner .progress-overlay { display: none !important; }
+.page-inner .toast { display: none !important; }
+.page-inner .btn { display: none !important; }
+.page-inner .btn-print { display: none !important; }
+.page-inner .btn-img { display: none !important; }
+.page-inner button[onclick*="print"] { display: none !important; }
+.page-inner button[onclick*="save"] { display: none !important; }
+.page-inner button[id*="save"] { display: none !important; }
+
+/* ===== BACK TO TOP ===== */
+#back-top {
+  position: fixed; bottom: 24px; right: 24px;
+  width: 46px; height: 46px;
+  background: rgba(14,165,233,0.12);
+  border: 1px solid rgba(14,165,233,0.28);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: #38bdf8;
+  opacity: 0; pointer-events: none;
+  transition: all 0.25s;
+  z-index: 500;
+}
+#back-top.visible { opacity: 1; pointer-events: auto; }
+#back-top:hover { background: rgba(14,165,233,0.22); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(14,165,233,0.2); }
+
+/* ===== GLOBAL CREDIT FOOTER ===== */
+.global-footer {
+  text-align: center;
+  padding: 20px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 11px;
+  color: rgba(255,255,255,0.18);
+  letter-spacing: 0.15em;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.global-footer strong { color: rgba(255,255,255,0.42); font-weight: 600; }
+
+/* ===== PAGE-SPECIFIC CSS (scoped) ===== */
+/* ===== Windows 11 ===== */
+#page-win {
+  --bg: #0f1923;
+  --surface: #172030;
+  --surface2: #1e2a3d;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --text: #e2eaf5;
+  --text2: #7f93ae;
+  --text3: #3d5068;
+
+  --c1: #0ea5e9;   /* Win키 기본 — sky */
+  --c1g: rgba(14,165,233,0.11);
+  --c1b: rgba(14,165,233,0.28);
+
+  --c2: #f97316;   /* 창 관리·스냅 — orange */
+  --c2g: rgba(249,115,22,0.11);
+  --c2b: rgba(249,115,22,0.28);
+
+  --c3: #a855f7;   /* 가상 데스크톱 — purple */
+  --c3g: rgba(168,85,247,0.11);
+  --c3b: rgba(168,85,247,0.28);
+
+  --c4: #10b981;   /* 스크린샷·미디어 — emerald */
+  --c4g: rgba(16,185,129,0.11);
+  --c4b: rgba(16,185,129,0.28);
+
+  --c5: #f59e0b;   /* 파일 탐색기 — amber */
+  --c5g: rgba(245,158,11,0.11);
+  --c5b: rgba(245,158,11,0.28);
+
+  --c6: #ef4444;   /* 시스템 제어 — red */
+  --c6g: rgba(239,68,68,0.10);
+  --c6b: rgba(239,68,68,0.26);
+
+  --c7: #64748b;   /* 접근성·기타 — slate */
+  --c7g: rgba(100,116,139,0.12);
+  --c7b: rgba(100,116,139,0.28);
+}
+#page-win #page-win .page-inner {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans KR', -apple-system, sans-serif;
+  font-weight: 300;
+  line-height: 1.6;
+  padding: 72px 20px 80px;
+}#page-win .win-logo {
+  width: 24px; height: 24px; flex-shrink: 0;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 2px;
+}#page-win .win-logo span {
+  border-radius: 2px;
+  display: block;
+}#page-win .win-logo span:nth-child(1) { background: #f25022; }#page-win .win-logo span:nth-child(2) { background: #7fba00; }#page-win .win-logo span:nth-child(3) { background: #00a4ef; }#page-win .win-logo span:nth-child(4) { background: #ffb900; }#page-win .wrapper { max-width: 980px; margin: 0 auto; }#page-win .header { text-align: center; padding: 44px 0 52px; }#page-win .header-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 500; color: #38bdf8;
+  background: rgba(14,165,233,0.10); border: 1px solid rgba(14,165,233,0.24);
+  border-radius: 20px; padding: 4px 14px; margin-bottom: 20px;
+}#page-win .header-title {
+  font-size: 40px; font-weight: 700; letter-spacing: -1.5px;
+  color: var(--text); line-height: 1.15; margin-bottom: 10px;
+}#page-win .header-title span {
+  background: linear-gradient(135deg, #0ea5e9, #a855f7);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}#page-win .header-sub { font-size: 14px; color: var(--text2); }#page-win .header-chips { display: flex; justify-content: center; gap: 7px; margin-top: 20px; flex-wrap: wrap; }#page-win .chip {
+  font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 6px; border: 1px solid;
+  letter-spacing: 0.2px;
+}#page-win .win-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px;
+  display: inline-grid; grid-template-columns: 1fr 1fr; gap: 1.5px;
+  vertical-align: middle; margin-right: 2px;
+}#page-win .win-badge span { border-radius: 1px; display: block; }#page-win .win-badge span:nth-child(1) { background: #f25022; }#page-win .win-badge span:nth-child(2) { background: #7fba00; }#page-win .win-badge span:nth-child(3) { background: #00a4ef; }#page-win .win-badge span:nth-child(4) { background: #ffb900; }#page-win .section {
+  margin-bottom: 28px; border-radius: 12px; overflow: hidden;
+  border: 1px solid var(--border); background: var(--surface); break-inside: avoid;
+}#page-win .section-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 13px 18px 12px; border-bottom: 1px solid var(--border);
+}#page-win .section-icon { font-size: 16px; flex-shrink: 0; }#page-win .section-title { font-size: 13px; font-weight: 600; letter-spacing: -0.2px; }#page-win .section-count {
+  margin-left: auto; font-size: 11px; color: var(--text3);
+  background: var(--surface2); padding: 2px 8px; border-radius: 10px;
+  font-family: 'Space Mono', monospace;
+}#page-win .section-#page-win .page-inner { padding: 10px 12px 12px; }#page-win .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(268px, 1fr)); gap: 4px; }#page-win .row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 10px; border-radius: 8px; transition: background 0.1s; cursor: default;
+}#page-win .row:hover { background: var(--surface2); }#page-win .row-num { font-size: 10px; color: var(--text3); min-width: 18px; font-family: 'Space Mono', monospace; }#page-win .row-keys { display: flex; flex-wrap: wrap; align-items: center; gap: 3px; flex: 1; }#page-win .key {
+  font-family: 'Space Mono', monospace; font-size: 11px;
+  padding: 2px 7px; border-radius: 5px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.80);
+  white-space: nowrap; font-weight: 400;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06);
+}#page-win .key-win {
+  font-family: 'Space Mono', monospace; font-size: 10px;
+  padding: 2px 7px; border-radius: 5px;
+  border: 1px solid rgba(14,165,233,0.35);
+  background: rgba(14,165,233,0.12); color: #7dd3fc;
+  white-space: nowrap; font-weight: 700;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.55), inset 0 1px 0 rgba(14,165,233,0.10);
+  letter-spacing: 0.5px;
+}#page-win .sep { font-size: 11px; color: var(--text3); line-height: 1; }#page-win .row-desc { font-size: 12px; color: var(--text2); text-align: right; min-width: 120px; flex-shrink: 0; letter-spacing: -0.3px; }#page-win .s1 .section-head { background: linear-gradient(to right, rgba(14,165,233,0.08), transparent); }#page-win .s1 .section-title { color: #38bdf8; }#page-win .s1 .key { background: var(--c1g); border-color: var(--c1b); color: #7dd3fc; box-shadow: 0 1px 0 rgba(0,0,0,0.55), inset 0 1px 0 rgba(14,165,233,0.08); }#page-win .s1 .row-num { color: rgba(14,165,233,0.42); }#page-win .s2 .section-head { background: linear-gradient(to right, rgba(249,115,22,0.08), transparent); }#page-win .s2 .section-title { color: #fb923c; }#page-win .s2 .key { background: var(--c2g); border-color: var(--c2b); color: #fdba74; box-shadow: 0 1px 0 rgba(0,0,0,0.55), inset 0 1px 0 rgba(249,115,22,0.08); }#page-win .s2 .row-num { color: rgba(249,115,22,0.42); }#page-win .s3 .section-head { background: linear-gradient(to right, rgba(168,85,247,0.09), transparent); }#page-win .s3 .section-title { color: #c084fc; }#page-win .s3 .key { background: var(--c3g); border-color: var(--c3b); color: #d8b4fe; box-shadow: 0 1px 0 rgba(0,0,0,0.55), inset 0 1px 0 rgba(168,85,247,0.08); }#page-win .s3 .row-num { color: rgba(168,85,247,0.42); }#page-win .s4 .section-head { background: linear-gradient(to right, rgba(16,185,129,0.08), transparent); }#page-win .s4 .section-title { color: #34d399; }#page-win .s4 .key { background: var(--c4g); border-color: var(--c4b); color: #6ee7b7; box-shadow: 0 1px 0 rgba(0,0,0,0.55), inset 0 1px 0 rgba(16,185,129,0.08); }#page-win .s4 .row-num { color: rgba(16,185,129,0.42); }#page-win .s5 .section-head { background: linear-gradient(to right, rgba(245,158,11,0.08), transparent); }#page-win .s5 .section-title { color: #fbbf24; }#page-win .s5 .key { background: var(--c5g); border-color: var(--c5b); color: #fde68a; box-shadow: 0 1px 0 rgba(0,0,0,0.55), inset 0 1px 0 rgba(245,158,11,0.08); }#page-win .s5 .row-num { color: rgba(245,158,11,0.42); }#page-win .s6 .section-head { background: linear-gradient(to right, rgba(239,68,68,0.07), transparent); }#page-win .s6 .section-title { color: #f87171; }#page-win .s6 .key { background: var(--c6g); border-color: var(--c6b); color: #fca5a5; box-shadow: 0 1px 0 rgba(0,0,0,0.55), inset 0 1px 0 rgba(239,68,68,0.08); }#page-win .s6 .row-num { color: rgba(239,68,68,0.40); }#page-win .s7 .section-head { background: linear-gradient(to right, rgba(100,116,139,0.10), transparent); }#page-win .s7 .section-title { color: #94a3b8; }#page-win .s7 .key { background: var(--c7g); border-color: var(--c7b); color: #cbd5e1; box-shadow: 0 1px 0 rgba(0,0,0,0.55), inset 0 1px 0 rgba(100,116,139,0.08); }#page-win .s7 .row-num { color: rgba(100,116,139,0.45); }#page-win .key-win { background: rgba(14,165,233,0.13) !important; border-color: rgba(14,165,233,0.32) !important; color: #7dd3fc !important; }#page-win .note-box {
+  display: flex; align-items: flex-start; gap: 8px;
+  background: rgba(14,165,233,0.07); border: 1px solid rgba(14,165,233,0.20);
+  border-radius: 8px; padding: 9px 12px; margin-top: 10px;
+  font-size: 11.5px; color: #7dd3fc; line-height: 1.6;
+}#page-win .note-box::before { content: '💡'; font-size: 13px; flex-shrink: 0; margin-top: 1px; }#page-win .subsection { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }#page-win .subsection-label { font-size: 11px; font-weight: 500; color: var(--text3); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 7px; padding-left: 2px; }#page-win .footer { text-align: center; margin-top: 48px; padding: 28px 0 8px; border-top: 1px solid var(--border); }#page-win .footer-text { font-size: 12px; color: var(--text3); }#page-win .footer-credit { font-size: 16px; font-weight: 600; color: var(--text2); letter-spacing: -0.5px; margin-top: 6px; }#page-win .footer-credit span { color: #34d399; }
+
+@media print {#page-win #page-win .page-inner { padding-top: 20px; }#page-win .section { break-inside: avoid; page-break-inside: avoid; }
+}
+
+
+/* ===== Excel ===== */
+#page-excel {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #21262d;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --text: #e6edf3;
+  --text2: #8b949e;
+  --text3: #484f58;
+  --green: #1f883d;
+  --green-light: #3fb950;
+  --green-glow: rgba(63,185,80,0.18);
+  --blue: #388bfd;
+  --blue-glow: rgba(56,139,253,0.18);
+  --orange: #e3b341;
+  --orange-glow: rgba(227,179,65,0.15);
+  --purple: #bc8cff;
+  --purple-glow: rgba(188,140,255,0.15);
+  --teal: #39d353;
+  --red: #f85149;
+  --red-glow: rgba(248,81,73,0.15);
+  --pink: #ff7b72;
+}
+#page-excel #page-excel .page-inner {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans KR', -apple-system, sans-serif;
+  font-weight: 300;
+  line-height: 1.6;
+  padding: 72px 20px 80px;
+  min-height: 100vh;
+}#page-excel .wrapper { max-width: 980px; margin: 0 auto; }#page-excel .header { text-align: center; padding: 44px 0 52px; }#page-excel .header-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 500; color: var(--green-light);
+  letter-spacing: 0.5px;
+  background: rgba(63,185,80,0.1); border: 1px solid rgba(63,185,80,0.25);
+  border-radius: 20px; padding: 4px 14px; margin-bottom: 20px;
+}#page-excel .header-title {
+  font-size: 40px; font-weight: 700; letter-spacing: -1.5px;
+  color: var(--text); line-height: 1.15; margin-bottom: 10px;
+}#page-excel .header-title span {
+  background: linear-gradient(135deg, #3fb950, #388bfd);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}#page-excel .header-sub { font-size: 14px; color: var(--text2); letter-spacing: -0.2px; }#page-excel .header-chips { display: flex; justify-content: center; gap: 8px; margin-top: 20px; flex-wrap: wrap; }#page-excel .chip {
+  font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 6px; border: 1px solid;
+  font-family: 'Space Mono', monospace; letter-spacing: 0.3px;
+}#page-excel .section {
+  margin-bottom: 32px; border-radius: 12px; overflow: hidden;
+  border: 1px solid var(--border); background: var(--surface);
+  break-inside: avoid;
+}#page-excel .section-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 13px 18px 12px;
+  border-bottom: 1px solid var(--border);
+}#page-excel .section-icon { font-size: 16px; flex-shrink: 0; }#page-excel .section-title { font-size: 13px; font-weight: 600; letter-spacing: -0.2px; }#page-excel .section-count {
+  margin-left: auto; font-size: 11px; color: var(--text3);
+  background: var(--surface2); padding: 2px 8px; border-radius: 10px;
+  font-family: 'Space Mono', monospace;
+}#page-excel .section-#page-excel .page-inner { padding: 10px 12px 12px; }#page-excel .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(272px, 1fr)); gap: 4px; }#page-excel .row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 10px; border-radius: 8px;
+  transition: background 0.1s; cursor: default;
+}#page-excel .row:hover { background: var(--surface2); }#page-excel .row-num { font-size: 10px; color: var(--text3); min-width: 18px; font-family: 'Space Mono', monospace; }#page-excel .row-keys { display: flex; flex-wrap: wrap; align-items: center; gap: 3px; flex: 1; }#page-excel .key {
+  font-family: 'Space Mono', monospace; font-size: 11px;
+  padding: 2px 7px; border-radius: 5px;
+  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.82);
+  white-space: nowrap; font-weight: 400;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.07);
+}#page-excel .sep { font-size: 11px; color: var(--text3); line-height: 1; }#page-excel .row-desc { font-size: 12px; color: var(--text2); text-align: right; min-width: 100px; flex-shrink: 0; letter-spacing: -0.3px; }#page-excel .row-note { font-size: 10px; color: var(--text3); font-style: italic; margin-left: 4px; }#page-excel .s1 .section-head { background: linear-gradient(to right, rgba(63,185,80,0.08), transparent); }#page-excel .s1 .section-title { color: var(--green-light); }#page-excel .s1 .key {
+  background: rgba(63,185,80,0.10);
+  border-color: rgba(63,185,80,0.30);
+  color: #5ddb78;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.5), inset 0 1px 0 rgba(63,185,80,0.10);
+}#page-excel .s1 .row-num { color: rgba(63,185,80,0.45); }#page-excel .s2 .section-head { background: linear-gradient(to right, rgba(56,139,253,0.08), transparent); }#page-excel .s2 .section-title { color: var(--blue); }#page-excel .s2 .key {
+  background: rgba(56,139,253,0.10);
+  border-color: rgba(56,139,253,0.30);
+  color: #79b4ff;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.5), inset 0 1px 0 rgba(56,139,253,0.10);
+}#page-excel .s2 .row-num { color: rgba(56,139,253,0.45); }#page-excel .s3 .section-head { background: linear-gradient(to right, rgba(227,179,65,0.08), transparent); }#page-excel .s3 .section-title { color: var(--orange); }#page-excel .s3 .key {
+  background: rgba(227,179,65,0.10);
+  border-color: rgba(227,179,65,0.30);
+  color: #f0cb6a;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.5), inset 0 1px 0 rgba(227,179,65,0.10);
+}#page-excel .s3 .row-num { color: rgba(227,179,65,0.45); }#page-excel .s4 .section-head { background: linear-gradient(to right, rgba(188,140,255,0.10), transparent); }#page-excel .s4 .section-title { color: var(--purple); }#page-excel .s4 .key {
+  background: rgba(188,140,255,0.10);
+  border-color: rgba(188,140,255,0.30);
+  color: #d0aaff;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.5), inset 0 1px 0 rgba(188,140,255,0.10);
+}#page-excel .s4 .row-num { color: rgba(188,140,255,0.45); }#page-excel .s5 .section-head { background: linear-gradient(to right, rgba(255,123,114,0.08), transparent); }#page-excel .s5 .section-title { color: var(--pink); }#page-excel .s5 .key {
+  background: rgba(255,123,114,0.10);
+  border-color: rgba(255,123,114,0.30);
+  color: #ffaa9f;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,123,114,0.10);
+}#page-excel .s5 .row-num { color: rgba(255,123,114,0.45); }#page-excel .note-box {
+  display: flex; align-items: flex-start; gap: 8px;
+  background: rgba(227,179,65,0.07); border: 1px solid rgba(227,179,65,0.2);
+  border-radius: 8px; padding: 9px 12px; margin-top: 10px;
+  font-size: 11.5px; color: var(--orange); line-height: 1.5;
+}#page-excel .note-box::before { content: '⚠'; font-size: 13px; flex-shrink: 0; margin-top: 1px; }#page-excel .footer {
+  text-align: center; margin-top: 48px; padding: 28px 0 8px;
+  border-top: 1px solid var(--border);
+}#page-excel .footer-text { font-size: 12px; color: var(--text3); }#page-excel .footer-credit { font-size: 16px; font-weight: 600; color: var(--text2); letter-spacing: -0.5px; margin-top: 6px; }#page-excel .footer-credit span { color: var(--green-light); }
+
+@media print {#page-excel #page-excel .page-inner { padding-top: 20px; background: var(--bg) !important; }#page-excel .section { break-inside: avoid; page-break-inside: avoid; }#page-excel .row:hover { background: transparent; }
+}
+
+
+/* ===== PowerPoint ===== */
+#page-ppt {
+  --bg: #111318;
+  --surface: #1a1d24;
+  --surface2: #22262f;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --text: #e8eaf0;
+  --text2: #8d93a0;
+  --text3: #454c59;
+
+  /* 6 category colors */
+  --c1: #d97706;   /* 파일관리 — amber */
+  --c1g: rgba(217,119,6,0.13);
+  --c1b: rgba(217,119,6,0.28);
+
+  --c2: #22d3ee;   /* 텍스트 서식 — cyan */
+  --c2g: rgba(34,211,238,0.10);
+  --c2b: rgba(34,211,238,0.26);
+
+  --c3: #a78bfa;   /* 개체 편집 — violet */
+  --c3g: rgba(167,139,250,0.10);
+  --c3b: rgba(167,139,250,0.28);
+
+  --c4: #34d399;   /* 슬라이드 관리 — emerald */
+  --c4g: rgba(52,211,153,0.10);
+  --c4b: rgba(52,211,153,0.26);
+
+  --c5: #f472b6;   /* 슬라이드 쇼 — pink */
+  --c5g: rgba(244,114,182,0.10);
+  --c5b: rgba(244,114,182,0.26);
+
+  --c6: #60a5fa;   /* 보기·기타 — blue */
+  --c6g: rgba(96,165,250,0.10);
+  --c6b: rgba(96,165,250,0.26);
+}
+#page-ppt #page-ppt .page-inner {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans KR', -apple-system, sans-serif;
+  font-weight: 300;
+  line-height: 1.6;
+  padding: 72px 20px 80px;
+}#page-ppt .wrapper { max-width: 980px; margin: 0 auto; }#page-ppt .header { text-align: center; padding: 44px 0 52px; }#page-ppt .header-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 500; color: #e25c00;
+  background: rgba(226,92,0,0.10); border: 1px solid rgba(226,92,0,0.25);
+  border-radius: 20px; padding: 4px 14px; margin-bottom: 20px;
+}#page-ppt .header-title {
+  font-size: 40px; font-weight: 700; letter-spacing: -1.5px;
+  color: var(--text); line-height: 1.15; margin-bottom: 10px;
+}#page-ppt .header-title span {
+  background: linear-gradient(135deg, #e25c00, #f472b6);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}#page-ppt .header-sub { font-size: 14px; color: var(--text2); }#page-ppt .header-chips { display: flex; justify-content: center; gap: 8px; margin-top: 20px; flex-wrap: wrap; }#page-ppt .chip {
+  font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 6px; border: 1px solid;
+  font-family: 'Space Mono', monospace;
+}#page-ppt .section {
+  margin-bottom: 28px; border-radius: 12px; overflow: hidden;
+  border: 1px solid var(--border); background: var(--surface); break-inside: avoid;
+}#page-ppt .section-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 13px 18px 12px; border-bottom: 1px solid var(--border);
+}#page-ppt .section-icon { font-size: 16px; flex-shrink: 0; }#page-ppt .section-title { font-size: 13px; font-weight: 600; letter-spacing: -0.2px; }#page-ppt .section-count {
+  margin-left: auto; font-size: 11px; color: var(--text3);
+  background: var(--surface2); padding: 2px 8px; border-radius: 10px;
+  font-family: 'Space Mono', monospace;
+}#page-ppt .section-#page-ppt .page-inner { padding: 10px 12px 12px; }#page-ppt .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(268px, 1fr)); gap: 4px; }#page-ppt .row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 10px; border-radius: 8px;
+  transition: background 0.1s; cursor: default;
+}#page-ppt .row:hover { background: var(--surface2); }#page-ppt .row-num { font-size: 10px; color: var(--text3); min-width: 18px; font-family: 'Space Mono', monospace; }#page-ppt .row-keys { display: flex; flex-wrap: wrap; align-items: center; gap: 3px; flex: 1; }#page-ppt .key {
+  font-family: 'Space Mono', monospace; font-size: 11px;
+  padding: 2px 7px; border-radius: 5px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.80);
+  white-space: nowrap; font-weight: 400;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
+}#page-ppt .sep { font-size: 11px; color: var(--text3); line-height: 1; }#page-ppt .row-desc { font-size: 12px; color: var(--text2); text-align: right; min-width: 110px; flex-shrink: 0; letter-spacing: -0.3px; }#page-ppt .s1 .section-head { background: linear-gradient(to right, rgba(217,119,6,0.08), transparent); }#page-ppt .s1 .section-title { color: var(--c1); }#page-ppt .s1 .key { background: var(--c1g); border-color: var(--c1b); color: #fbbf24; box-shadow: 0 1px 0 rgba(0,0,0,0.5), inset 0 1px 0 rgba(217,119,6,0.08); }#page-ppt .s1 .row-num { color: rgba(217,119,6,0.40); }#page-ppt .s2 .section-head { background: linear-gradient(to right, rgba(34,211,238,0.07), transparent); }#page-ppt .s2 .section-title { color: var(--c2); }#page-ppt .s2 .key { background: var(--c2g); border-color: var(--c2b); color: #67e8f9; box-shadow: 0 1px 0 rgba(0,0,0,0.5), inset 0 1px 0 rgba(34,211,238,0.07); }#page-ppt .s2 .row-num { color: rgba(34,211,238,0.38); }#page-ppt .s3 .section-head { background: linear-gradient(to right, rgba(167,139,250,0.08), transparent); }#page-ppt .s3 .section-title { color: var(--c3); }#page-ppt .s3 .key { background: var(--c3g); border-color: var(--c3b); color: #c4b5fd; box-shadow: 0 1px 0 rgba(0,0,0,0.5), inset 0 1px 0 rgba(167,139,250,0.08); }#page-ppt .s3 .row-num { color: rgba(167,139,250,0.40); }#page-ppt .s4 .section-head { background: linear-gradient(to right, rgba(52,211,153,0.07), transparent); }#page-ppt .s4 .section-title { color: var(--c4); }#page-ppt .s4 .key { background: var(--c4g); border-color: var(--c4b); color: #6ee7b7; box-shadow: 0 1px 0 rgba(0,0,0,0.5), inset 0 1px 0 rgba(52,211,153,0.07); }#page-ppt .s4 .row-num { color: rgba(52,211,153,0.38); }#page-ppt .s5 .section-head { background: linear-gradient(to right, rgba(244,114,182,0.08), transparent); }#page-ppt .s5 .section-title { color: var(--c5); }#page-ppt .s5 .key { background: var(--c5g); border-color: var(--c5b); color: #f9a8d4; box-shadow: 0 1px 0 rgba(0,0,0,0.5), inset 0 1px 0 rgba(244,114,182,0.08); }#page-ppt .s5 .row-num { color: rgba(244,114,182,0.40); }#page-ppt .s6 .section-head { background: linear-gradient(to right, rgba(96,165,250,0.07), transparent); }#page-ppt .s6 .section-title { color: var(--c6); }#page-ppt .s6 .key { background: var(--c6g); border-color: var(--c6b); color: #93c5fd; box-shadow: 0 1px 0 rgba(0,0,0,0.5), inset 0 1px 0 rgba(96,165,250,0.07); }#page-ppt .s6 .row-num { color: rgba(96,165,250,0.38); }#page-ppt .note-box {
+  display: flex; align-items: flex-start; gap: 8px;
+  background: rgba(251,191,36,0.07); border: 1px solid rgba(251,191,36,0.18);
+  border-radius: 8px; padding: 9px 12px; margin-top: 10px;
+  font-size: 11.5px; color: #fbbf24; line-height: 1.6;
+}#page-ppt .note-box::before { content: '💡'; font-size: 13px; flex-shrink: 0; margin-top: 1px; }#page-ppt .subsection { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }#page-ppt .subsection-label { font-size: 11px; font-weight: 500; color: var(--text3); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 7px; padding-left: 2px; }#page-ppt .footer { text-align: center; margin-top: 48px; padding: 28px 0 8px; border-top: 1px solid var(--border); }#page-ppt .footer-text { font-size: 12px; color: var(--text3); }#page-ppt .footer-credit { font-size: 16px; font-weight: 600; color: var(--text2); letter-spacing: -0.5px; margin-top: 6px; }#page-ppt .footer-credit span { color: var(--c4); }
+
+@media print {#page-ppt #page-ppt .page-inner { padding-top: 20px; }#page-ppt .section { break-inside: avoid; page-break-inside: avoid; }
+}
+
+
+/* ===== 한글 HWP ===== */
+#page-hwp {
+    --bg: #0e0e12;
+    --surface: #16161c;
+    --surface2: #1e1e26;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #e8e8f0;
+    --muted: #7a7a90;
+    --hint: #4a4a5a;
+    --accent1: #6c63ff;
+    --accent2: #00d4a0;
+    --accent3: #ff6b8a;
+    --accent4: #f0a500;
+    --accent5: #4fc3f7;
+    --accent6: #ce93d8;
+  }
+#page-hwp #page-hwp .page-inner {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    padding: 80px 24px 80px;
+    min-height: 100vh;
+  }#page-hwp .wrapper { max-width: 960px; margin: 0 auto; }#page-hwp .header {
+    text-align: center;
+    margin-bottom: 64px;
+    position: relative;
+  }#page-hwp .header::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--accent1), var(--accent2), transparent);
+    transform: translateY(-50%);
+    opacity: 0.4;
+  }#page-hwp .header-inner {
+    position: relative;
+    display: inline-block;
+    background: var(--bg);
+    padding: 0 32px;
+  }#page-hwp .header-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--accent2);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }#page-hwp .header-title {
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #fff 30%, var(--accent1));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }#page-hwp .header-sub {
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }#page-hwp .section { margin-bottom: 48px; break-inside: avoid; }#page-hwp .section-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border2);
+  }#page-hwp .section-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }#page-hwp .section-title { font-size: 13px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; }#page-hwp .section-count { margin-left: auto; font-family: 'Space Mono', monospace; font-size: 11px; color: var(--hint); }#page-hwp .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 6px; }#page-hwp .row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 14px;
+    transition: background 0.15s, border-color 0.15s;
+  }#page-hwp .row:hover { background: var(--surface2); border-color: var(--border2); }#page-hwp .row-num { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--hint); min-width: 18px; }#page-hwp .row-keys { display: flex; flex-wrap: wrap; gap: 4px; flex: 1; }#page-hwp .key {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    padding: 2px 7px;
+    border-radius: 5px;
+    border: 1px solid;
+    white-space: nowrap;
+    font-weight: 400;
+  }#page-hwp .row-desc { font-size: 12px; color: #b0b0c8; text-align: right; min-width: 80px; flex-shrink: 0; font-weight: 400; }#page-hwp .sep { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--hint); margin: 0 1px; }#page-hwp .s1 .section-dot { background: var(--accent1); }#page-hwp .s1 .section-title { color: var(--accent1); }#page-hwp .s1 .key { background: rgba(108,99,255,0.12); border-color: rgba(108,99,255,0.3); color: #a09cff; }#page-hwp .s2 .section-dot { background: var(--accent2); }#page-hwp .s2 .section-title { color: var(--accent2); }#page-hwp .s2 .key { background: rgba(0,212,160,0.10); border-color: rgba(0,212,160,0.28); color: #5de8c8; }#page-hwp .s3 .section-dot { background: var(--accent3); }#page-hwp .s3 .section-title { color: var(--accent3); }#page-hwp .s3 .key { background: rgba(255,107,138,0.10); border-color: rgba(255,107,138,0.28); color: #ff9ab3; }#page-hwp .s4 .section-dot { background: var(--accent4); }#page-hwp .s4 .section-title { color: var(--accent4); }#page-hwp .s4 .key { background: rgba(240,165,0,0.10); border-color: rgba(240,165,0,0.28); color: #f5c842; }#page-hwp .s5 .section-dot { background: var(--accent5); }#page-hwp .s5 .section-title { color: var(--accent5); }#page-hwp .s5 .key { background: rgba(79,195,247,0.10); border-color: rgba(79,195,247,0.28); color: #81d4fa; }#page-hwp .s6 .section-dot { background: var(--accent6); }#page-hwp .s6 .section-title { color: var(--accent6); }#page-hwp .s6 .key { background: rgba(206,147,216,0.10); border-color: rgba(206,147,216,0.28); color: #e1bee7; }#page-hwp .subsection { margin-top: 20px; padding-top: 14px; border-top: 1px dashed var(--border); }#page-hwp .subsection-label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }#page-hwp .footer {
+    text-align: center;
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'Noto Sans KR', sans-serif;
+    letter-spacing: 1px;
+    line-height: 2;
+  }#page-hwp .footer .credit {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--accent2);
+    letter-spacing: 2px;
+    margin-top: 4px;
+  }
+
+  @media print {#page-hwp #page-hwp .page-inner { padding-top: 24px; background: #0e0e12 !important; }#page-hwp .section { break-inside: avoid; page-break-inside: avoid; }#page-hwp .row:hover { background: var(--surface); border-color: var(--border); }
+  }
+
+  
+  
+  
+  
+  
+
+
+/* ===== Chrome ===== */
+#page-chrome {
+  --bg: #0d1015;
+  --surface: #151a22;
+  --surface2: #1c2330;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --text: #e3e8f0;
+  --text2: #7d8fa8;
+  --text3: #384558;
+
+  /* Google 4 colors used per category */
+  --c1: #4285f4;   /* 탭·창 — Google Blue */
+  --c1g: rgba(66,133,244,0.11);
+  --c1b: rgba(66,133,244,0.28);
+
+  --c2: #34a853;   /* 주소표시줄·검색 — Google Green */
+  --c2g: rgba(52,168,83,0.10);
+  --c2b: rgba(52,168,83,0.26);
+
+  --c3: #ea4335;   /* 웹페이지 탐색 — Google Red */
+  --c3g: rgba(234,67,53,0.10);
+  --c3b: rgba(234,67,53,0.26);
+
+  --c4: #fbbc04;   /* 북마크·히스토리 — Google Yellow */
+  --c4g: rgba(251,188,4,0.11);
+  --c4b: rgba(251,188,4,0.28);
+
+  --c5: #9c27b0;   /* 개발자 도구 — Purple */
+  --c5g: rgba(156,39,176,0.10);
+  --c5b: rgba(156,39,176,0.27);
+
+  --c6: #00bcd4;   /* 화면·확대축소 — Cyan */
+  --c6g: rgba(0,188,212,0.10);
+  --c6b: rgba(0,188,212,0.26);
+}
+#page-chrome #page-chrome .page-inner {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans KR', -apple-system, sans-serif;
+  font-weight: 300;
+  line-height: 1.6;
+  padding: 72px 20px 80px;
+}#page-chrome .chrome-logo {
+  width: 26px; height: 26px; position: relative; flex-shrink: 0;
+}#page-chrome .chrome-logo svg { width: 26px; height: 26px; }#page-chrome .wrapper { max-width: 980px; margin: 0 auto; }#page-chrome .header { text-align: center; padding: 44px 0 52px; }#page-chrome .header-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 500; color: #7baff8;
+  background: rgba(66,133,244,0.10); border: 1px solid rgba(66,133,244,0.24);
+  border-radius: 20px; padding: 4px 14px; margin-bottom: 20px;
+}#page-chrome .header-title {
+  font-size: 40px; font-weight: 700; letter-spacing: -1.5px;
+  color: var(--text); line-height: 1.15; margin-bottom: 10px;
+}#page-chrome .header-title span {
+  background: linear-gradient(90deg, #4285f4 0%, #34a853 33%, #fbbc04 66%, #ea4335 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}#page-chrome .header-sub { font-size: 14px; color: var(--text2); }#page-chrome .header-chips { display: flex; justify-content: center; gap: 7px; margin-top: 20px; flex-wrap: wrap; }#page-chrome .chip { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 6px; border: 1px solid; }#page-chrome .section {
+  margin-bottom: 28px; border-radius: 12px; overflow: hidden;
+  border: 1px solid var(--border); background: var(--surface); break-inside: avoid;
+}#page-chrome .section-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 13px 18px 12px; border-bottom: 1px solid var(--border);
+}#page-chrome .section-icon { font-size: 16px; flex-shrink: 0; }#page-chrome .section-title { font-size: 13px; font-weight: 600; letter-spacing: -0.2px; }#page-chrome .section-count {
+  margin-left: auto; font-size: 11px; color: var(--text3);
+  background: var(--surface2); padding: 2px 8px; border-radius: 10px;
+  font-family: 'Space Mono', monospace;
+}#page-chrome .section-#page-chrome .page-inner { padding: 10px 12px 12px; }#page-chrome .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(272px, 1fr)); gap: 4px; }#page-chrome .row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 10px; border-radius: 8px; transition: background 0.1s; cursor: default;
+}#page-chrome .row:hover { background: var(--surface2); }#page-chrome .row-num { font-size: 10px; color: var(--text3); min-width: 18px; font-family: 'Space Mono', monospace; }#page-chrome .row-keys { display: flex; flex-wrap: wrap; align-items: center; gap: 3px; flex: 1; }#page-chrome .key {
+  font-family: 'Space Mono', monospace; font-size: 11px;
+  padding: 2px 7px; border-radius: 5px;
+  border: 1px solid rgba(255,255,255,0.13);
+  background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.80);
+  white-space: nowrap; font-weight: 400;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06);
+}#page-chrome .sep { font-size: 11px; color: var(--text3); line-height: 1; }#page-chrome .row-desc { font-size: 12px; color: var(--text2); text-align: right; min-width: 130px; flex-shrink: 0; letter-spacing: -0.3px; }#page-chrome .s1 .section-head { background: linear-gradient(to right, rgba(66,133,244,0.09), transparent); }#page-chrome .s1 .section-title { color: #7baff8; }#page-chrome .s1 .key { background: var(--c1g); border-color: var(--c1b); color: #a8c7fb; box-shadow: 0 1px 0 rgba(0,0,0,0.55), inset 0 1px 0 rgba(66,133,244,0.08); }#page-chrome .s1 .row-num { color: rgba(66,133,244,0.44); }#page-chrome .s2 .section-head { background: linear-gradient(to right, rgba(52,168,83,0.08), transparent); }#page-chrome .s2 .section-title { color: #5dc97a; }#page-chrome .s2 .key { background: var(--c2g); border-color: var(--c2b); color: #86e09e; box-shadow: 0 1px 0 rgba(0,0,0,0.55), inset 0 1px 0 rgba(52,168,83,0.08); }#page-chrome .s2 .row-num { color: rgba(52,168,83,0.44); }#page-chrome .s3 .section-head { background: linear-gradient(to right, rgba(234,67,53,0.08), transparent); }#page-chrome .s3 .section-title { color: #f28b82; }#page-chrome .s3 .key { background: var(--c3g); border-color: var(--c3b); color: #f6afa8; box-shadow: 0 1px 0 rgba(0,0,0,0.55), inset 0 1px 0 rgba(234,67,53,0.08); }#page-chrome .s3 .row-num { color: rgba(234,67,53,0.44); }#page-chrome .s4 .section-head { background: linear-gradient(to right, rgba(251,188,4,0.08), transparent); }#page-chrome .s4 .section-title { color: #fdd663; }#page-chrome .s4 .key { background: var(--c4g); border-color: var(--c4b); color: #fee8a0; box-shadow: 0 1px 0 rgba(0,0,0,0.55), inset 0 1px 0 rgba(251,188,4,0.08); }#page-chrome .s4 .row-num { color: rgba(251,188,4,0.44); }#page-chrome .s5 .section-head { background: linear-gradient(to right, rgba(156,39,176,0.09), transparent); }#page-chrome .s5 .section-title { color: #ce93d8; }#page-chrome .s5 .key { background: var(--c5g); border-color: var(--c5b); color: #e1bee7; box-shadow: 0 1px 0 rgba(0,0,0,0.55), inset 0 1px 0 rgba(156,39,176,0.08); }#page-chrome .s5 .row-num { color: rgba(156,39,176,0.44); }#page-chrome .s6 .section-head { background: linear-gradient(to right, rgba(0,188,212,0.08), transparent); }#page-chrome .s6 .section-title { color: #4dd0e1; }#page-chrome .s6 .key { background: var(--c6g); border-color: var(--c6b); color: #80deea; box-shadow: 0 1px 0 rgba(0,0,0,0.55), inset 0 1px 0 rgba(0,188,212,0.08); }#page-chrome .s6 .row-num { color: rgba(0,188,212,0.44); }#page-chrome .note-box {
+  display: flex; align-items: flex-start; gap: 8px;
+  background: rgba(66,133,244,0.07); border: 1px solid rgba(66,133,244,0.20);
+  border-radius: 8px; padding: 9px 12px; margin-top: 10px;
+  font-size: 11.5px; color: #7baff8; line-height: 1.6;
+}#page-chrome .note-box::before { content: '💡'; font-size: 13px; flex-shrink: 0; margin-top: 1px; }#page-chrome .subsection { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }#page-chrome .subsection-label { font-size: 11px; font-weight: 500; color: var(--text3); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 7px; padding-left: 2px; }#page-chrome .footer { text-align: center; margin-top: 48px; padding: 28px 0 8px; border-top: 1px solid var(--border); }#page-chrome .footer-text { font-size: 12px; color: var(--text3); }#page-chrome .footer-credit { font-size: 16px; font-weight: 600; color: var(--text2); letter-spacing: -0.5px; margin-top: 6px; }#page-chrome .footer-credit span { color: #5dc97a; }
+
+@media print {#page-chrome #page-chrome .page-inner { padding-top: 20px; }#page-chrome .section { break-inside: avoid; page-break-inside: avoid; }
+}
+
+
+/* ===== WRAPPER SCOPING ===== */
+.page-inner .wrapper { max-width: 980px; margin: 0 auto; }
+</style>
+</head>
+<body style="margin:0;padding:0;background:#050810;">
+
+<!-- ===== INTRO ===== -->
+<div id="intro-screen">
+  <div class="intro-bg"></div>
+  <div class="intro-grid"></div>
+  <div class="intro-particles" id="introParticles"></div>
+  <div class="intro-scanline"></div>
+  
+  <div class="intro-content">
+    <div class="intro-eyebrow">KEYBOARD SHORTCUT COLLECTION</div>
+    
+    <div class="intro-title">
+      <span class="t1">업무 필수</span>
+      <span class="t2">단축키 모음</span>
+    </div>
+    
+    <div class="intro-sub">Windows 11 &nbsp;·&nbsp; Excel &nbsp;·&nbsp; PowerPoint &nbsp;·&nbsp; 한글 &nbsp;·&nbsp; Chrome</div>
+    
+    
+    <div class="intro-nav-section">
+      <div class="intro-nav-label">바로 이동하기</div>
+      <div class="intro-nav-btns">
+
+        <button class="intro-nav-btn" data-pid="win" style="--btn-color:#0ea5e9" onclick="goToPage('win')">
+          <div class="btn-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 12V6.75l6-1.32v6.57H3zm17-9v8.75h-7V3.92L20 3zM3 13h6v6.43l-6-1.33V13zm17 .25V22l-7-1.08v-7.67h7z"/>
+            </svg>
+          </div>
+          <span class="btn-label">Windows 11</span>
+          <span class="btn-sub">OS</span>
+        </button>
+
+        <button class="intro-nav-btn" data-pid="excel" style="--btn-color:#10b981" onclick="goToPage('excel')">
+          <div class="btn-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 9l-2 3 2 3H11l-1.5-2.4L8 17H6l2.5-3.5L6 10h2l1.5 2.4L11 10h2zm5-1h-4V3.5L18 10z"/>
+            </svg>
+          </div>
+          <span class="btn-label">Excel</span>
+          <span class="btn-sub">SPREADSHEET</span>
+        </button>
+
+        <button class="intro-nav-btn" data-pid="ppt" style="--btn-color:#f97316" onclick="goToPage('ppt')">
+          <div class="btn-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M2 19.5V4.5A1.5 1.5 0 0 1 3.5 3h17A1.5 1.5 0 0 1 22 4.5v15a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 19.5zm2-1h16v-14H4v14zm2-2v-2h4v2H6zm0-4V8h4.5a2 2 0 0 1 0 4H6zm2-2v1.5h2.5a.75.75 0 0 0 0-1.5H8z"/>
+            </svg>
+          </div>
+          <span class="btn-label">PowerPoint</span>
+          <span class="btn-sub">PRESENTATION</span>
+        </button>
+
+        <button class="intro-nav-btn" data-pid="hwp" style="--btn-color:#a855f7" onclick="goToPage('hwp')">
+          <div class="btn-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM6 20V4h7v5h5v11H6zm2-3h8v-1H8v1zm0-3h8v-1H8v1zm0-3h5v-1H8v1z"/>
+            </svg>
+          </div>
+          <span class="btn-label">한글 HWP</span>
+          <span class="btn-sub">WORD PROCESSOR</span>
+        </button>
+
+        <button class="intro-nav-btn" data-pid="chrome" style="--btn-color:#3b82f6" onclick="goToPage('chrome')">
+          <div class="btn-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+            </svg>
+          </div>
+          <span class="btn-label">Chrome</span>
+          <span class="btn-sub">BROWSER</span>
+        </button>
+
+      </div>
+    </div>
+    
+    <div class="intro-credit">제작 &nbsp;·&nbsp; <strong>상무고 유환수</strong></div>
+  </div>
+</div>
+
+<!-- ===== MAIN APP ===== -->
+<div id="main-app">
+  <nav id="top-nav">
+    <button class="nav-home-btn" onclick="returnToIntro()" title="인트로로 돌아가기">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      <span>SHORTCUTS</span>
+    </button>
+    <button class="tab-btn" data-page="win" onclick="showPage('win')" style="--tab-color:#0ea5e9">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M3 12V6.75l6-1.32v6.57H3zm17-9v8.75h-7V3.92L20 3zM3 13h6v6.43l-6-1.33V13zm17 .25V22l-7-1.08v-7.67h7z"/></svg>
+      Windows 11
+    </button>
+    <button class="tab-btn" data-page="excel" onclick="showPage('excel')" style="--tab-color:#10b981">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 9l-2 3 2 3H11l-1.5-2.4L8 17H6l2.5-3.5L6 10h2l1.5 2.4L11 10h2zm5-1h-4V3.5L18 10z"/></svg>
+      Excel
+    </button>
+    <button class="tab-btn" data-page="ppt" onclick="showPage('ppt')" style="--tab-color:#f97316">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M2 19.5V4.5A1.5 1.5 0 0 1 3.5 3h17A1.5 1.5 0 0 1 22 4.5v15a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 19.5zm2-1h16v-14H4v14zm2-2v-2h4v2H6zm0-4V8h4.5a2 2 0 0 1 0 4H6zm2-2v1.5h2.5a.75.75 0 0 0 0-1.5H8z"/></svg>
+      PowerPoint
+    </button>
+    <button class="tab-btn" data-page="hwp" onclick="showPage('hwp')" style="--tab-color:#a855f7">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM6 20V4h7v5h5v11H6zm2-3h8v-1H8v1zm0-3h8v-1H8v1zm0-3h5v-1H8v1z"/></svg>
+      한글 HWP
+    </button>
+    <button class="tab-btn" data-page="chrome" onclick="showPage('chrome')" style="--tab-color:#3b82f6">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+      Chrome
+    </button>
+
+  </nav>
+
+  <!-- ===== ACTION BAR ===== -->
+  <div id="action-bar">
+    <button class="action-print-btn" onclick="window.print()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      인쇄
+    </button>
+  </div>
+  <div class="page-container active" id="page-win" data-bg="#0f1923">
+<div class="page-inner"><div class="wrapper" id="content-win">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-eyebrow">⌨️ Keyboard Reference · Windows 11</div>
+    <div class="header-title">Windows 11 단축키 <span>총정리</span></div>
+    <div class="header-sub">Microsoft Windows 11 · All Shortcuts · 7 Categories · 70+ Keys</div>
+    <div class="header-chips">
+      <div class="chip" style="color:#7dd3fc;border-color:rgba(14,165,233,0.3);background:rgba(14,165,233,0.08)">🪟 Win키 기본</div>
+      <div class="chip" style="color:#fdba74;border-color:rgba(249,115,22,0.3);background:rgba(249,115,22,0.08)">🪟 창 관리·스냅</div>
+      <div class="chip" style="color:#d8b4fe;border-color:rgba(168,85,247,0.3);background:rgba(168,85,247,0.08)">🖥 가상 데스크톱</div>
+      <div class="chip" style="color:#6ee7b7;border-color:rgba(16,185,129,0.3);background:rgba(16,185,129,0.08)">📸 스크린샷·미디어</div>
+      <div class="chip" style="color:#fde68a;border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.08)">📁 파일 탐색기</div>
+      <div class="chip" style="color:#fca5a5;border-color:rgba(239,68,68,0.3);background:rgba(239,68,68,0.08)">⚙️ 시스템 제어</div>
+      <div class="chip" style="color:#cbd5e1;border-color:rgba(100,116,139,0.3);background:rgba(100,116,139,0.08)">♿ 접근성·기타</div>
+    </div>
+  </div>
+
+  <!-- Win키 기본 -->
+  <div id="sec-win-basic" class="section s1">
+    <div class="section-head">
+      <div class="section-icon">🪟</div>
+      <div class="section-title">Win키 기본 조합</div>
+      <div class="section-count">16 keys</div>
+    </div>
+    <div class="section-body">
+      <div class="grid">
+        <div class="row"><span class="row-num">01</span><div class="row-keys"><span class="key-win">Win</span></div><span class="row-desc">시작 메뉴 열기</span></div>
+        <div class="row"><span class="row-num">02</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">D</span></div><span class="row-desc">바탕화면 보기/복귀</span></div>
+        <div class="row"><span class="row-num">03</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">E</span></div><span class="row-desc">파일 탐색기 열기</span></div>
+        <div class="row"><span class="row-num">04</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">L</span></div><span class="row-desc">화면 잠금</span></div>
+        <div class="row"><span class="row-num">05</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">R</span></div><span class="row-desc">실행 대화상자</span></div>
+        <div class="row"><span class="row-num">06</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">S</span></div><span class="row-desc">검색 열기</span></div>
+        <div class="row"><span class="row-num">07</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">I</span></div><span class="row-desc">설정 열기</span></div>
+        <div class="row"><span class="row-num">08</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">A</span></div><span class="row-desc">빠른 설정 (Wi-Fi·볼륨)</span></div>
+        <div class="row"><span class="row-num">09</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">N</span></div><span class="row-desc">알림 센터·캘린더</span></div>
+        <div class="row"><span class="row-num">10</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">W</span></div><span class="row-desc">위젯 열기</span></div>
+        <div class="row"><span class="row-num">11</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">Z</span></div><span class="row-desc">스냅 레이아웃 메뉴</span></div>
+        <div class="row"><span class="row-num">12</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">K</span></div><span class="row-desc">캐스트 (무선 디스플레이)</span></div>
+        <div class="row"><span class="row-num">13</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">H</span></div><span class="row-desc">음성 입력 (받아쓰기)</span></div>
+        <div class="row"><span class="row-num">14</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">V</span></div><span class="row-desc">클립보드 히스토리</span></div>
+        <div class="row"><span class="row-num">15</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">.</span></div><span class="row-desc">이모지·기호 입력</span></div>
+        <div class="row"><span class="row-num">16</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">C</span></div><span class="row-desc">Microsoft Teams 열기</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 창 관리·스냅 -->
+  <div id="sec-win-window" class="section s2">
+    <div class="section-head">
+      <div class="section-icon">🗂</div>
+      <div class="section-title">창 관리 · 스냅</div>
+      <div class="section-count">14 keys</div>
+    </div>
+    <div class="section-body">
+      <div class="grid">
+        <div class="row"><span class="row-num">17</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">←</span></div><span class="row-desc">창 왼쪽 절반 스냅</span></div>
+        <div class="row"><span class="row-num">18</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">→</span></div><span class="row-desc">창 오른쪽 절반 스냅</span></div>
+        <div class="row"><span class="row-num">19</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">↑</span></div><span class="row-desc">창 최대화</span></div>
+        <div class="row"><span class="row-num">20</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">↓</span></div><span class="row-desc">창 최소화 / 복원</span></div>
+        <div class="row"><span class="row-num">21</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">←</span></div><span class="row-desc">창 왼쪽 모니터로 이동</span></div>
+        <div class="row"><span class="row-num">22</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">→</span></div><span class="row-desc">창 오른쪽 모니터로 이동</span></div>
+        <div class="row"><span class="row-num">23</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">Home</span></div><span class="row-desc">현재 창 외 모두 최소화</span></div>
+        <div class="row"><span class="row-num">24</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">M</span></div><span class="row-desc">모든 창 최소화</span></div>
+        <div class="row"><span class="row-num">25</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">M</span></div><span class="row-desc">최소화 창 모두 복원</span></div>
+        <div class="row"><span class="row-num">26</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">Tab</span></div><span class="row-desc">앱 전환</span></div>
+        <div class="row"><span class="row-num">27</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">Tab</span></div><span class="row-desc">작업 보기 열기</span></div>
+        <div class="row"><span class="row-num">28</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">F4</span></div><span class="row-desc">앱 닫기 / 전원 메뉴</span></div>
+        <div class="row"><span class="row-num">29</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">T</span></div><span class="row-desc">작업 표시줄 앱 순환</span></div>
+        <div class="row"><span class="row-num">30</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">1~9</span></div><span class="row-desc">작업 표시줄 앱 실행</span></div>
+      </div>
+      <div class="note-box">Win + Z로 스냅 레이아웃 메뉴를 열면 2분할·3분할·4분할 등 다양한 배치를 바로 선택할 수 있어요.</div>
+    </div>
+  </div>
+
+  <!-- 가상 데스크톱 -->
+  <div id="sec-win-vdesk" class="section s3">
+    <div class="section-head">
+      <div class="section-icon">🖥</div>
+      <div class="section-title">가상 데스크톱</div>
+      <div class="section-count">6 keys</div>
+    </div>
+    <div class="section-body">
+      <div class="grid">
+        <div class="row"><span class="row-num">31</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">Ctrl</span><span class="sep">+</span><span class="key">D</span></div><span class="row-desc">새 가상 데스크톱 추가</span></div>
+        <div class="row"><span class="row-num">32</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">Ctrl</span><span class="sep">+</span><span class="key">→</span></div><span class="row-desc">오른쪽 데스크톱으로</span></div>
+        <div class="row"><span class="row-num">33</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">Ctrl</span><span class="sep">+</span><span class="key">←</span></div><span class="row-desc">왼쪽 데스크톱으로</span></div>
+        <div class="row"><span class="row-num">34</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">Ctrl</span><span class="sep">+</span><span class="key">F4</span></div><span class="row-desc">현재 데스크톱 닫기</span></div>
+        <div class="row"><span class="row-num">35</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">Tab</span></div><span class="row-desc">데스크톱 보기·관리</span></div>
+        <div class="row"><span class="row-num">36</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">←/→</span></div><span class="row-desc">창을 다른 데스크톱으로</span></div>
+      </div>
+      <div class="note-box">가상 데스크톱은 업무용·개인용·학습용 공간을 분리해 멀티태스킹 효율을 높여주는 Windows 11의 핵심 기능이에요.</div>
+    </div>
+  </div>
+
+  <!-- 스크린샷·미디어 -->
+  <div id="sec-win-screen" class="section s4">
+    <div class="section-head">
+      <div class="section-icon">📸</div>
+      <div class="section-title">스크린샷 · 미디어</div>
+      <div class="section-count">10 keys</div>
+    </div>
+    <div class="section-body">
+      <div class="grid">
+        <div class="row"><span class="row-num">37</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">S</span></div><span class="row-desc">화면 일부 캡처 (캡처 도구)</span></div>
+        <div class="row"><span class="row-num">38</span><div class="row-keys"><span class="key">PrtSc</span></div><span class="row-desc">전체 화면 클립보드 복사</span></div>
+        <div class="row"><span class="row-num">39</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">PrtSc</span></div><span class="row-desc">전체 화면 자동 저장</span></div>
+        <div class="row"><span class="row-num">40</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">PrtSc</span></div><span class="row-desc">활성 창 클립보드 복사</span></div>
+        <div class="row"><span class="row-num">41</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">Alt</span><span class="sep">+</span><span class="key">PrtSc</span></div><span class="row-desc">게임 화면 캡처 (Xbox)</span></div>
+        <div class="row"><span class="row-num">42</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">G</span></div><span class="row-desc">Xbox 게임 바 열기</span></div>
+        <div class="row"><span class="row-num">43</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">Alt</span><span class="sep">+</span><span class="key">R</span></div><span class="row-desc">화면 녹화 시작/중지</span></div>
+        <div class="row"><span class="row-num">44</span><div class="row-keys"><span class="key">▶</span><span class="sep">/</span><span class="key">⏸ (미디어키)</span></div><span class="row-desc">재생 / 일시정지</span></div>
+        <div class="row"><span class="row-num">45</span><div class="row-keys"><span class="key">⏮ (미디어키)</span></div><span class="row-desc">이전 트랙</span></div>
+        <div class="row"><span class="row-num">46</span><div class="row-keys"><span class="key">⏭ (미디어키)</span></div><span class="row-desc">다음 트랙</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 파일 탐색기 -->
+  <div id="sec-win-explorer" class="section s5">
+    <div class="section-head">
+      <div class="section-icon">📁</div>
+      <div class="section-title">파일 탐색기</div>
+      <div class="section-count">12 keys</div>
+    </div>
+    <div class="section-body">
+      <div class="grid">
+        <div class="row"><span class="row-num">47</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">E</span></div><span class="row-desc">파일 탐색기 열기</span></div>
+        <div class="row"><span class="row-num">48</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">←</span></div><span class="row-desc">이전 폴더로</span></div>
+        <div class="row"><span class="row-num">49</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">→</span></div><span class="row-desc">다음 폴더로</span></div>
+        <div class="row"><span class="row-num">50</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">↑</span></div><span class="row-desc">상위 폴더로</span></div>
+        <div class="row"><span class="row-num">51</span><div class="row-keys"><span class="key">F2</span></div><span class="row-desc">파일/폴더 이름 변경</span></div>
+        <div class="row"><span class="row-num">52</span><div class="row-keys"><span class="key">F5</span></div><span class="row-desc">새로 고침</span></div>
+        <div class="row"><span class="row-num">53</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">N</span></div><span class="row-desc">새 탐색기 창 열기</span></div>
+        <div class="row"><span class="row-num">54</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">W</span></div><span class="row-desc">탐색기 창 닫기</span></div>
+        <div class="row"><span class="row-num">55</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">N</span></div><span class="row-desc">새 폴더 만들기</span></div>
+        <div class="row"><span class="row-num">56</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">Delete</span></div><span class="row-desc">휴지통 거치지 않고 삭제</span></div>
+        <div class="row"><span class="row-num">57</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Z</span></div><span class="row-desc">파일 작업 되돌리기</span></div>
+        <div class="row"><span class="row-num">58</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">Enter</span></div><span class="row-desc">속성 창 열기</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 시스템 제어 -->
+  <div id="sec-win-system" class="section s6">
+    <div class="section-head">
+      <div class="section-icon">⚙️</div>
+      <div class="section-title">시스템 제어</div>
+      <div class="section-count">12 keys</div>
+    </div>
+    <div class="section-body">
+      <div class="grid">
+        <div class="row"><span class="row-num">59</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">Esc</span></div><span class="row-desc">작업 관리자 열기</span></div>
+        <div class="row"><span class="row-num">60</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Alt</span><span class="sep">+</span><span class="key">Del</span></div><span class="row-desc">보안 옵션 화면</span></div>
+        <div class="row"><span class="row-num">61</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">X</span></div><span class="row-desc">빠른 링크 메뉴 (파워메뉴)</span></div>
+        <div class="row"><span class="row-num">62</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">P</span></div><span class="row-desc">디스플레이 프로젝션</span></div>
+        <div class="row"><span class="row-num">63</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">Break</span></div><span class="row-desc">시스템 속성</span></div>
+        <div class="row"><span class="row-num">64</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">U</span></div><span class="row-desc">접근성 센터 설정</span></div>
+        <div class="row"><span class="row-num">65</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">클릭</span></div><span class="row-desc">앱 관리자 권한 실행</span></div>
+        <div class="row"><span class="row-num">66</span><div class="row-keys"><span class="key">F1</span></div><span class="row-desc">도움말 열기</span></div>
+        <div class="row"><span class="row-num">67</span><div class="row-keys"><span class="key">F5</span></div><span class="row-desc">새로 고침</span></div>
+        <div class="row"><span class="row-num">68</span><div class="row-keys"><span class="key">F10</span></div><span class="row-desc">메뉴 모드 활성화</span></div>
+        <div class="row"><span class="row-num">69</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">F10</span></div><span class="row-desc">우클릭 메뉴 (단축 메뉴)</span></div>
+        <div class="row"><span class="row-num">70</span><div class="row-keys"><span class="key">Esc</span></div><span class="row-desc">현재 작업 취소</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 접근성·기타 -->
+  <div id="sec-win-access" class="section s7">
+    <div class="section-head">
+      <div class="section-icon">♿</div>
+      <div class="section-title">접근성 · 기타</div>
+      <div class="section-count">10 keys</div>
+    </div>
+    <div class="section-body">
+      <div class="grid">
+        <div class="row"><span class="row-num">71</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">+</span></div><span class="row-desc">돋보기 켜기 / 확대</span></div>
+        <div class="row"><span class="row-num">72</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">-</span></div><span class="row-desc">돋보기 축소</span></div>
+        <div class="row"><span class="row-num">73</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">Esc</span></div><span class="row-desc">돋보기 종료</span></div>
+        <div class="row"><span class="row-num">74</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">Enter</span></div><span class="row-desc">내레이터 시작/종료</span></div>
+        <div class="row"><span class="row-num">75</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Alt</span><span class="sep">+</span><span class="key">Num 5</span></div><span class="row-desc">마우스 키 사용 토글</span></div>
+        <div class="row"><span class="row-num">76</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">Enter</span></div><span class="row-desc">내레이터 풀스크린 토글</span></div>
+        <div class="row"><span class="row-num">77</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">Space</span></div><span class="row-desc">입력 언어·자판 전환</span></div>
+        <div class="row"><span class="row-num">78</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Space</span></div><span class="row-desc">IME 켜기/끄기</span></div>
+        <div class="row"><span class="row-num">79</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">F</span></div><span class="row-desc">피드백 허브 열기</span></div>
+        <div class="row"><span class="row-num">80</span><div class="row-keys"><span class="key-win">Win</span><span class="sep">+</span><span class="key">O</span></div><span class="row-desc">화면 회전 잠금</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-text">Microsoft Windows 11 단축키 참조표 · 7 Categories · 80 Keys</div>
+    <div class="footer-credit">제작 · <span>상무고 유환수</span></div>
+  </div>
+
+</div></div>
+</div>
+<div class="page-container" id="page-excel" data-bg="#0a1a14">
+<div class="page-inner"><div class="wrapper" id="content-excel">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-eyebrow">⌨️ Keyboard Reference · Microsoft Excel</div>
+    <div class="header-title">엑셀 단축키 <span>총정리</span></div>
+    <div class="header-sub">Microsoft Excel · All Shortcuts · 5 Categories · 51 Keys</div>
+    <div class="header-chips">
+      <div class="chip" style="color:#388bfd;border-color:rgba(56,139,253,0.3);background:rgba(56,139,253,0.08)">Ctrl</div>
+      <div class="chip" style="color:#e3b341;border-color:rgba(227,179,65,0.3);background:rgba(227,179,65,0.08)">Alt</div>
+      <div class="chip" style="color:#3fb950;border-color:rgba(63,185,80,0.3);background:rgba(63,185,80,0.08)">Shift</div>
+      <div class="chip" style="color:#bc8cff;border-color:rgba(188,140,255,0.3);background:rgba(188,140,255,0.08)">F1–F12</div>
+    </div>
+  </div>
+
+  <!-- 통합 문서 -->
+  <div id="sec-excel-workbook" class="section s1">
+    <div class="section-head">
+      <div class="section-icon">📂</div>
+      <div class="section-title">통합 문서</div>
+      <div class="section-count">7 keys</div>
+    </div>
+    <div class="section-body">
+      <div class="grid">
+        <div class="row"><span class="row-num">01</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">N</span></div><span class="row-desc">새 통합 문서 만들기</span></div>
+        <div class="row"><span class="row-num">02</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">O</span></div><span class="row-desc">기존 통합 문서 열기</span></div>
+        <div class="row"><span class="row-num">03</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">S</span></div><span class="row-desc">통합 문서 저장</span></div>
+        <div class="row"><span class="row-num">04</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">W</span></div><span class="row-desc">현재 통합 문서 닫기</span></div>
+        <div class="row"><span class="row-num">05</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">F4</span></div><span class="row-desc">Excel 닫기</span></div>
+        <div class="row"><span class="row-num">06</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">PgDn</span></div><span class="row-desc">다음(오른쪽) 시트로 이동</span></div>
+        <div class="row"><span class="row-num">07</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">PgUp</span></div><span class="row-desc">이전(왼쪽) 시트로 이동</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 리본 -->
+  <div id="sec-excel-ribbon" class="section s2">
+    <div class="section-head">
+      <div class="section-icon">🎀</div>
+      <div class="section-title">리본 메뉴</div>
+      <div class="section-count">10 keys</div>
+    </div>
+    <div class="section-body">
+      <div class="grid">
+        <div class="row"><span class="row-num">08</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">H</span></div><span class="row-desc">[홈] 탭 열기</span></div>
+        <div class="row"><span class="row-num">09</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">N</span></div><span class="row-desc">[삽입] 탭 열기</span></div>
+        <div class="row"><span class="row-num">10</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">J</span><span class="sep">→</span><span class="key">I</span></div><span class="row-desc">[그리기] 탭 열기</span></div>
+        <div class="row"><span class="row-num">11</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">P</span></div><span class="row-desc">[페이지 레이아웃] 탭</span></div>
+        <div class="row"><span class="row-num">12</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">M</span></div><span class="row-desc">[수식] 탭 열기</span></div>
+        <div class="row"><span class="row-num">13</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">A</span></div><span class="row-desc">[데이터] 탭 열기</span></div>
+        <div class="row"><span class="row-num">14</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">R</span></div><span class="row-desc">[검토] 탭 열기</span></div>
+        <div class="row"><span class="row-num">15</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">W</span></div><span class="row-desc">[보기] 탭 열기</span></div>
+        <div class="row"><span class="row-num">16</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">L</span></div><span class="row-desc">[개발 도구] 탭 열기</span></div>
+        <div class="row"><span class="row-num">17</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">F</span></div><span class="row-desc">[파일] 탭 열기</span></div>
+      </div>
+      <div class="note-box">[개발 도구] 탭(Alt + L)은 화면에 표시된 상태라야 제대로 작동합니다.</div>
+    </div>
+  </div>
+
+  <!-- 셀 서식 -->
+  <div id="sec-excel-format" class="section s3">
+    <div class="section-head">
+      <div class="section-icon">🎨</div>
+      <div class="section-title">셀 서식</div>
+      <div class="section-count">12 keys</div>
+    </div>
+    <div class="section-body">
+      <div class="grid">
+        <div class="row"><span class="row-num">18</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">1</span></div><span class="row-desc">[셀 서식] 대화상자</span></div>
+        <div class="row"><span class="row-num">19</span><div class="row-keys"><span class="key">F2</span></div><span class="row-desc">셀 편집</span></div>
+        <div class="row"><span class="row-num">20</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">C</span><span class="sep">/</span><span class="key">V</span></div><span class="row-desc">셀 복사 / 붙여넣기</span></div>
+        <div class="row"><span class="row-num">21</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">I</span></div><span class="row-desc">이탤릭체</span></div>
+        <div class="row"><span class="row-num">22</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">B</span></div><span class="row-desc">굵은 글꼴</span></div>
+        <div class="row"><span class="row-num">23</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">H</span><span class="sep">+</span><span class="key">A</span><span class="sep">+</span><span class="key">C</span></div><span class="row-desc">가운데 정렬</span></div>
+        <div class="row"><span class="row-num">24</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">H</span><span class="sep">+</span><span class="key">H</span></div><span class="row-desc">색 채우기</span></div>
+        <div class="row"><span class="row-num">25</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">H</span><span class="sep">+</span><span class="key">B</span></div><span class="row-desc">테두리 그리기</span></div>
+        <div class="row"><span class="row-num">26</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">_</span></div><span class="row-desc">테두리 제거</span></div>
+        <div class="row"><span class="row-num">27</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">&amp;</span></div><span class="row-desc">윤곽선 추가</span></div>
+        <div class="row"><span class="row-num">28</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">→</span></div><span class="row-desc">오른쪽 전체 범위 선택</span></div>
+        <div class="row"><span class="row-num">29</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">↓</span></div><span class="row-desc">아래쪽 전체 범위 선택</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 행과 열 -->
+  <div id="sec-excel-rowcol" class="section s4">
+    <div class="section-head">
+      <div class="section-icon">📐</div>
+      <div class="section-title">행과 열</div>
+      <div class="section-count">9 keys</div>
+    </div>
+    <div class="section-body">
+      <div class="grid">
+        <div class="row"><span class="row-num">30</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">Space</span></div><span class="row-desc">전체 행 선택</span></div>
+        <div class="row"><span class="row-num">31</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Space</span></div><span class="row-desc">전체 열 선택</span></div>
+        <div class="row"><span class="row-num">32</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">-</span></div><span class="row-desc">행 삭제 (행 선택 후)</span></div>
+        <div class="row"><span class="row-num">33</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">H</span><span class="sep">+</span><span class="key">D</span><span class="sep">+</span><span class="key">C</span></div><span class="row-desc">열 삭제</span></div>
+        <div class="row"><span class="row-num">34</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">9</span></div><span class="row-desc">선택한 행 숨기기</span></div>
+        <div class="row"><span class="row-num">35</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">9</span></div><span class="row-desc">숨긴 행 표시</span></div>
+        <div class="row"><span class="row-num">36</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">0</span></div><span class="row-desc">선택한 열 숨기기</span></div>
+        <div class="row"><span class="row-num">37</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">0</span></div><span class="row-desc">숨긴 열 표시</span></div>
+        <div class="row"><span class="row-num">38</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">A</span></div><span class="row-desc">인접한 모든 셀 선택</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 기타 유용한 단축키 -->
+  <div id="sec-excel-misc" class="section s5">
+    <div class="section-head">
+      <div class="section-icon">⚡</div>
+      <div class="section-title">기타 유용한 단축키</div>
+      <div class="section-count">13 keys</div>
+    </div>
+    <div class="section-body">
+      <div class="grid">
+        <div class="row"><span class="row-num">39</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">;</span></div><span class="row-desc">오늘 날짜 삽입</span></div>
+        <div class="row"><span class="row-num">40</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">;</span></div><span class="row-desc">현재 시간 삽입</span></div>
+        <div class="row"><span class="row-num">41</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">F2</span></div><span class="row-desc">셀에 메모 삽입</span></div>
+        <div class="row"><span class="row-num">42</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">F</span><span class="sep">/</span><span class="key">H</span></div><span class="row-desc">찾기 / 바꾸기</span></div>
+        <div class="row"><span class="row-num">43</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">K</span></div><span class="row-desc">하이퍼링크 삽입</span></div>
+        <div class="row"><span class="row-num">44</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">$</span></div><span class="row-desc">통화 형식 적용</span></div>
+        <div class="row"><span class="row-num">45</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">%</span></div><span class="row-desc">백분율 형식 적용</span></div>
+        <div class="row"><span class="row-num">46</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">H</span><span class="sep">+</span><span class="key">K</span></div><span class="row-desc">쉼표 형식 적용</span></div>
+        <div class="row"><span class="row-num">47</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">Q</span></div><span class="row-desc">[검색] 란으로 이동</span></div>
+        <div class="row"><span class="row-num">48</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">L</span></div><span class="row-desc">필터 활성화 / 해제</span></div>
+        <div class="row"><span class="row-num">49</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Z</span><span class="sep">/</span><span class="key">Y</span></div><span class="row-desc">실행 취소 / 다시 실행</span></div>
+        <div class="row"><span class="row-num">50</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">F10</span></div><span class="row-desc">단축 메뉴 열기</span></div>
+        <div class="row"><span class="row-num">51</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">P</span></div><span class="row-desc">인쇄</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-text">Microsoft Excel 단축키 참조표 · 5 Categories · 51 Keys</div>
+    <div class="footer-credit">제작 · <span>상무고 유환수</span></div>
+  </div>
+
+</div></div>
+</div>
+<div class="page-container" id="page-ppt" data-bg="#111318">
+<div class="page-inner"><div class="wrapper" id="content-ppt">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-eyebrow">⌨️ Keyboard Reference · Microsoft PowerPoint</div>
+    <div class="header-title">파워포인트 단축키 <span>총정리</span></div>
+    <div class="header-sub">Microsoft PowerPoint · All Shortcuts · 6 Categories · 55 Keys</div>
+    <div class="header-chips">
+      <div class="chip" style="color:#fbbf24;border-color:rgba(217,119,6,0.3);background:rgba(217,119,6,0.08)">📁 파일 관리</div>
+      <div class="chip" style="color:#67e8f9;border-color:rgba(34,211,238,0.3);background:rgba(34,211,238,0.08)">✍️ 텍스트 서식</div>
+      <div class="chip" style="color:#c4b5fd;border-color:rgba(167,139,250,0.3);background:rgba(167,139,250,0.08)">🔷 개체 편집</div>
+      <div class="chip" style="color:#6ee7b7;border-color:rgba(52,211,153,0.3);background:rgba(52,211,153,0.08)">🗂 슬라이드 관리</div>
+      <div class="chip" style="color:#f9a8d4;border-color:rgba(244,114,182,0.3);background:rgba(244,114,182,0.08)">▶️ 슬라이드 쇼</div>
+      <div class="chip" style="color:#93c5fd;border-color:rgba(96,165,250,0.3);background:rgba(96,165,250,0.08)">🔍 보기·기타</div>
+    </div>
+  </div>
+
+  <!-- 파일 관리 -->
+  <div id="sec-ppt-file" class="section s1">
+    <div class="section-head">
+      <div class="section-icon">📁</div>
+      <div class="section-title">파일 관리</div>
+      <div class="section-count">9 keys</div>
+    </div>
+    <div class="section-body">
+      <div class="grid">
+        <div class="row"><span class="row-num">01</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">N</span></div><span class="row-desc">새 프레젠테이션</span></div>
+        <div class="row"><span class="row-num">02</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">O</span></div><span class="row-desc">파일 열기</span></div>
+        <div class="row"><span class="row-num">03</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">S</span></div><span class="row-desc">저장</span></div>
+        <div class="row"><span class="row-num">04</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">S</span></div><span class="row-desc">다른 이름으로 저장</span></div>
+        <div class="row"><span class="row-num">05</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">P</span></div><span class="row-desc">인쇄</span></div>
+        <div class="row"><span class="row-num">06</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">W</span></div><span class="row-desc">현재 파일 닫기</span></div>
+        <div class="row"><span class="row-num">07</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Q</span></div><span class="row-desc">PowerPoint 종료</span></div>
+        <div class="row"><span class="row-num">08</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Z</span></div><span class="row-desc">실행 취소</span></div>
+        <div class="row"><span class="row-num">09</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Y</span><span class="sep">/</span><span class="key">F4</span></div><span class="row-desc">다시 실행 / 반복</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 텍스트 서식 -->
+  <div id="sec-ppt-text" class="section s2">
+    <div class="section-head">
+      <div class="section-icon">✍️</div>
+      <div class="section-title">텍스트 서식</div>
+      <div class="section-count">12 keys</div>
+    </div>
+    <div class="section-body">
+      <div class="grid">
+        <div class="row"><span class="row-num">10</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">B</span></div><span class="row-desc">굵게</span></div>
+        <div class="row"><span class="row-num">11</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">I</span></div><span class="row-desc">기울임</span></div>
+        <div class="row"><span class="row-num">12</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">U</span></div><span class="row-desc">밑줄</span></div>
+        <div class="row"><span class="row-num">13</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">T</span></div><span class="row-desc">글꼴 대화상자</span></div>
+        <div class="row"><span class="row-num">14</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">]</span></div><span class="row-desc">글자 크게 (1pt)</span></div>
+        <div class="row"><span class="row-num">15</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">[</span></div><span class="row-desc">글자 작게 (1pt)</span></div>
+        <div class="row"><span class="row-num">16</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">&gt;</span></div><span class="row-desc">글자 크게 (단계)</span></div>
+        <div class="row"><span class="row-num">17</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">&lt;</span></div><span class="row-desc">글자 작게 (단계)</span></div>
+        <div class="row"><span class="row-num">18</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">L</span></div><span class="row-desc">왼쪽 정렬</span></div>
+        <div class="row"><span class="row-num">19</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">E</span></div><span class="row-desc">가운데 정렬</span></div>
+        <div class="row"><span class="row-num">20</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">R</span></div><span class="row-desc">오른쪽 정렬</span></div>
+        <div class="row"><span class="row-num">21</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">J</span></div><span class="row-desc">양쪽 정렬</span></div>
+      </div>
+      <div class="subsection">
+        <div class="subsection-label">단락 편집</div>
+        <div class="grid">
+          <div class="row"><span class="row-num">+</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">F3</span></div><span class="row-desc">영어 대/소문자 변환</span></div>
+          <div class="row"><span class="row-num">+</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">↑↓</span></div><span class="row-desc">단락 위/아래 이동</span></div>
+          <div class="row"><span class="row-num">+</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">←</span></div><span class="row-desc">단락 수준 높이기</span></div>
+          <div class="row"><span class="row-num">+</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">→</span></div><span class="row-desc">단락 수준 낮추기</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 개체 편집 -->
+  <div id="sec-ppt-object" class="section s3">
+    <div class="section-head">
+      <div class="section-icon">🔷</div>
+      <div class="section-title">개체 편집</div>
+      <div class="section-count">14 keys</div>
+    </div>
+    <div class="section-body">
+      <div class="grid">
+        <div class="row"><span class="row-num">22</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">C</span></div><span class="row-desc">복사</span></div>
+        <div class="row"><span class="row-num">23</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">X</span></div><span class="row-desc">잘라내기</span></div>
+        <div class="row"><span class="row-num">24</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">V</span></div><span class="row-desc">붙여넣기</span></div>
+        <div class="row"><span class="row-num">25</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">D</span></div><span class="row-desc">개체 복제</span></div>
+        <div class="row"><span class="row-num">26</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">A</span></div><span class="row-desc">모두 선택</span></div>
+        <div class="row"><span class="row-num">27</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">G</span></div><span class="row-desc">그룹화</span></div>
+        <div class="row"><span class="row-num">28</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">G</span></div><span class="row-desc">그룹 해제</span></div>
+        <div class="row"><span class="row-num">29</span><div class="row-keys"><span class="key">Tab</span></div><span class="row-desc">다음 개체 선택</span></div>
+        <div class="row"><span class="row-num">30</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">Tab</span></div><span class="row-desc">이전 개체 선택</span></div>
+        <div class="row"><span class="row-num">31</span><div class="row-keys"><span class="key">방향키</span></div><span class="row-desc">개체 미세 이동</span></div>
+        <div class="row"><span class="row-num">32</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">방향키</span></div><span class="row-desc">개체 크게 이동</span></div>
+        <div class="row"><span class="row-num">33</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">K</span></div><span class="row-desc">하이퍼링크 삽입</span></div>
+        <div class="row"><span class="row-num">34</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">]</span><span class="sep">→</span><span class="key">앞으로</span></div><span class="row-desc">개체 순서 앞으로</span></div>
+        <div class="row"><span class="row-num">35</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">[</span><span class="sep">→</span><span class="key">뒤로</span></div><span class="row-desc">개체 순서 뒤로</span></div>
+      </div>
+      <div class="note-box">개체 순서 변경은 홈 탭 → 정렬 → 앞으로/뒤로 가져오기, 또는 리본 단축키 Alt+H+G+R(앞) / Alt+H+G+K(뒤)를 사용하세요.</div>
+    </div>
+  </div>
+
+  <!-- 슬라이드 관리 -->
+  <div id="sec-ppt-slide" class="section s4">
+    <div class="section-head">
+      <div class="section-icon">🗂</div>
+      <div class="section-title">슬라이드 관리</div>
+      <div class="section-count">10 keys</div>
+    </div>
+    <div class="section-body">
+      <div class="grid">
+        <div class="row"><span class="row-num">36</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">M</span></div><span class="row-desc">새 슬라이드 삽입</span></div>
+        <div class="row"><span class="row-num">37</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">D</span></div><span class="row-desc">슬라이드 복제</span></div>
+        <div class="row"><span class="row-num">38</span><div class="row-keys"><span class="key">Delete</span></div><span class="row-desc">슬라이드 삭제</span></div>
+        <div class="row"><span class="row-num">39</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Home</span></div><span class="row-desc">첫 슬라이드로 이동</span></div>
+        <div class="row"><span class="row-num">40</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">End</span></div><span class="row-desc">마지막 슬라이드로</span></div>
+        <div class="row"><span class="row-num">41</span><div class="row-keys"><span class="key">Page Up</span></div><span class="row-desc">이전 슬라이드</span></div>
+        <div class="row"><span class="row-num">42</span><div class="row-keys"><span class="key">Page Down</span></div><span class="row-desc">다음 슬라이드</span></div>
+        <div class="row"><span class="row-num">43</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">↑</span></div><span class="row-desc">슬라이드 위로 이동</span></div>
+        <div class="row"><span class="row-num">44</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">↓</span></div><span class="row-desc">슬라이드 아래로 이동</span></div>
+        <div class="row"><span class="row-num">45</span><div class="row-keys"><span class="key">F6</span></div><span class="row-desc">창 사이 이동</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 슬라이드 쇼 -->
+  <div id="sec-ppt-show" class="section s5">
+    <div class="section-head">
+      <div class="section-icon">▶️</div>
+      <div class="section-title">슬라이드 쇼</div>
+      <div class="section-count">11 keys</div>
+    </div>
+    <div class="section-body">
+      <div class="grid">
+        <div class="row"><span class="row-num">46</span><div class="row-keys"><span class="key">F5</span></div><span class="row-desc">처음부터 슬라이드 쇼</span></div>
+        <div class="row"><span class="row-num">47</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">F5</span></div><span class="row-desc">현재 슬라이드부터</span></div>
+        <div class="row"><span class="row-num">48</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">F5</span></div><span class="row-desc">발표자 보기로 시작</span></div>
+        <div class="row"><span class="row-num">49</span><div class="row-keys"><span class="key">N</span><span class="sep">/</span><span class="key">Space</span><span class="sep">/</span><span class="key">→</span></div><span class="row-desc">다음 슬라이드/애니</span></div>
+        <div class="row"><span class="row-num">50</span><div class="row-keys"><span class="key">P</span><span class="sep">/</span><span class="key">BackSpace</span><span class="sep">/</span><span class="key">←</span></div><span class="row-desc">이전 슬라이드/애니</span></div>
+        <div class="row"><span class="row-num">51</span><div class="row-keys"><span class="key">숫자</span><span class="sep">+</span><span class="key">Enter</span></div><span class="row-desc">특정 슬라이드로 이동</span></div>
+        <div class="row"><span class="row-num">52</span><div class="row-keys"><span class="key">Esc</span></div><span class="row-desc">슬라이드 쇼 종료</span></div>
+        <div class="row"><span class="row-num">53</span><div class="row-keys"><span class="key">B</span></div><span class="row-desc">검정 화면 토글</span></div>
+        <div class="row"><span class="row-num">54</span><div class="row-keys"><span class="key">W</span></div><span class="row-desc">흰 화면 토글</span></div>
+        <div class="row"><span class="row-num">55</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">L</span></div><span class="row-desc">레이저 포인터</span></div>
+        <div class="row"><span class="row-num">56</span><div class="row-keys"><span class="key">E</span></div><span class="row-desc">화면 잉크 지우기</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 보기·기타 -->
+  <div id="sec-ppt-view" class="section s6">
+    <div class="section-head">
+      <div class="section-icon">🔍</div>
+      <div class="section-title">보기 · 기타</div>
+      <div class="section-count">9 keys</div>
+    </div>
+    <div class="section-body">
+      <div class="grid">
+        <div class="row"><span class="row-num">57</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">F</span></div><span class="row-desc">찾기</span></div>
+        <div class="row"><span class="row-num">58</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">H</span></div><span class="row-desc">찾기 / 바꾸기</span></div>
+        <div class="row"><span class="row-num">59</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">F9</span></div><span class="row-desc">눈금선 표시 토글</span></div>
+        <div class="row"><span class="row-num">60</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">F9</span></div><span class="row-desc">안내선 표시 토글</span></div>
+        <div class="row"><span class="row-num">61</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">N</span><span class="sep">+</span><span class="key">U</span></div><span class="row-desc">기호 삽입</span></div>
+        <div class="row"><span class="row-num">62</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">+</span></div><span class="row-desc">화면 확대</span></div>
+        <div class="row"><span class="row-num">63</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">-</span></div><span class="row-desc">화면 축소</span></div>
+        <div class="row"><span class="row-num">64</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">H</span><span class="sep">+</span><span class="key">G</span><span class="sep">+</span><span class="key">R</span></div><span class="row-desc">개체 앞으로 가져오기</span></div>
+        <div class="row"><span class="row-num">65</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">H</span><span class="sep">+</span><span class="key">G</span><span class="sep">+</span><span class="key">K</span></div><span class="row-desc">개체 뒤로 보내기</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-text">Microsoft PowerPoint 단축키 참조표 · 6 Categories · 65 Keys</div>
+    <div class="footer-credit">제작 · <span>상무고 유환수</span></div>
+  </div>
+
+</div></div>
+</div>
+<div class="page-container" id="page-hwp" data-bg="#0d0f14">
+<div class="page-inner"><div class="wrapper" id="content-hwp">
+
+  <div class="header">
+    <div class="header-inner">
+      <div class="header-label">Keyboard Reference</div>
+      <div class="header-title">한글 단축키 총정리</div>
+      <div class="header-sub">HWP · All Shortcuts · 6 Categories</div>
+    </div>
+  </div>
+
+  <!-- 기본 단축키 -->
+  <div id="sec-hwp-basic" class="section s1">
+    <div class="section-head">
+      <div class="section-dot"></div>
+      <div class="section-title">기본 단축키</div>
+      <div class="section-count">18 keys</div>
+    </div>
+    <div class="grid">
+      <div class="row"><span class="row-num">01</span><div class="row-keys"><span class="key">SpaceBar</span></div><span class="row-desc">빈칸 삽입</span></div>
+      <div class="row"><span class="row-num">02</span><div class="row-keys"><span class="key">Enter</span></div><span class="row-desc">문단 나누기</span></div>
+      <div class="row"><span class="row-num">03</span><div class="row-keys"><span class="key">← → ↑ ↓</span></div><span class="row-desc">한 글자 이동</span></div>
+      <div class="row"><span class="row-num">04</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">← →</span></div><span class="row-desc">한 단어 이동</span></div>
+      <div class="row"><span class="row-num">05</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">Alt</span><span class="sep">+</span><span class="key">← →</span></div><span class="row-desc">한 단어 이동</span></div>
+      <div class="row"><span class="row-num">06</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">↑ ↓</span></div><span class="row-desc">한 문단 이동</span></div>
+      <div class="row"><span class="row-num">07</span><div class="row-keys"><span class="key">Home</span><span class="sep">/</span><span class="key">End</span></div><span class="row-desc">줄 처음/끝</span></div>
+      <div class="row"><span class="row-num">08</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">Home/End</span></div><span class="row-desc">문단 처음/끝</span></div>
+      <div class="row"><span class="row-num">09</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Home/End</span></div><span class="row-desc">화면 처음/끝</span></div>
+      <div class="row"><span class="row-num">10</span><div class="row-keys"><span class="key">Page Up/Dn</span></div><span class="row-desc">한 화면 앞/뒤</span></div>
+      <div class="row"><span class="row-num">11</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">Page Up/Dn</span></div><span class="row-desc">한 쪽 앞/뒤</span></div>
+      <div class="row"><span class="row-num">12</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Page Up/Dn</span></div><span class="row-desc">문서 처음/끝</span></div>
+      <div class="row"><span class="row-num">13</span><div class="row-keys"><span class="key">Delete</span></div><span class="row-desc">뒷글자 지우기</span></div>
+      <div class="row"><span class="row-num">14</span><div class="row-keys"><span class="key">BackSpace</span></div><span class="row-desc">앞글자 지우기</span></div>
+      <div class="row"><span class="row-num">15</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">T</span><span class="sep">/</span><span class="key">Del</span></div><span class="row-desc">한 단어 지우기</span></div>
+      <div class="row"><span class="row-num">16</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">BackSpace</span></div><span class="row-desc">앞 단어 지우기</span></div>
+      <div class="row"><span class="row-num">17</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Y</span></div><span class="row-desc">한 줄 지우기</span></div>
+      <div class="row"><span class="row-num">18</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">Y</span></div><span class="row-desc">줄 뒤 지우기</span></div>
+    </div>
+  </div>
+
+  <!-- 파일 메뉴 -->
+  <div id="sec-hwp-file" class="section s2">
+    <div class="section-head">
+      <div class="section-dot"></div>
+      <div class="section-title">파일 메뉴</div>
+      <div class="section-count">9 keys</div>
+    </div>
+    <div class="grid">
+      <div class="row"><span class="row-num">01</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">N</span></div><span class="row-desc">새 문서</span></div>
+      <div class="row"><span class="row-num">02</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">O</span></div><span class="row-desc">불러오기</span></div>
+      <div class="row"><span class="row-num">03</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">F3</span></div><span class="row-desc">최근 문서</span></div>
+      <div class="row"><span class="row-num">04</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">S</span><span class="sep">/</span><span class="key">Ctrl</span><span class="sep">+</span><span class="key">S</span></div><span class="row-desc">저장하기</span></div>
+      <div class="row"><span class="row-num">05</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">V</span></div><span class="row-desc">다른 이름으로 저장</span></div>
+      <div class="row"><span class="row-num">06</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Q,I/Q,D</span></div><span class="row-desc">문서 정보</span></div>
+      <div class="row"><span class="row-num">07</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">P</span><span class="sep">/</span><span class="key">Ctrl</span><span class="sep">+</span><span class="key">P</span></div><span class="row-desc">인쇄</span></div>
+      <div class="row"><span class="row-num">08</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">X</span></div><span class="row-desc">끝</span></div>
+      <div class="row"><span class="row-num">09</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">F4</span></div><span class="row-desc">문서 닫기</span></div>
+    </div>
+  </div>
+
+  <!-- 편집 메뉴 -->
+  <div id="sec-hwp-edit" class="section s3">
+    <div class="section-head">
+      <div class="section-dot"></div>
+      <div class="section-title">편집 메뉴</div>
+      <div class="section-count">28 keys</div>
+    </div>
+    <div class="grid">
+      <div class="row"><span class="row-num">01</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Z</span></div><span class="row-desc">되돌리기</span></div>
+      <div class="row"><span class="row-num">02</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">Z</span></div><span class="row-desc">다시 실행</span></div>
+      <div class="row"><span class="row-num">03</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">X</span></div><span class="row-desc">오려두기</span></div>
+      <div class="row"><span class="row-num">04</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">C</span></div><span class="row-desc">복사하기</span></div>
+      <div class="row"><span class="row-num">05</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">V</span></div><span class="row-desc">붙이기</span></div>
+      <div class="row"><span class="row-num">06</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">C</span></div><span class="row-desc">모양 복사</span></div>
+      <div class="row"><span class="row-num">07</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">E</span></div><span class="row-desc">지우기</span></div>
+      <div class="row"><span class="row-num">08</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">A</span></div><span class="row-desc">모두 선택</span></div>
+      <div class="row"><span class="row-num">09</span><div class="row-keys"><span class="key">F3</span></div><span class="row-desc">블록 설정</span></div>
+      <div class="row"><span class="row-num">10</span><div class="row-keys"><span class="key">F3</span><span class="sep">×2</span></div><span class="row-desc">낱말 블록</span></div>
+      <div class="row"><span class="row-num">11</span><div class="row-keys"><span class="key">F3</span><span class="sep">×3</span></div><span class="row-desc">한 문단 블록</span></div>
+      <div class="row"><span class="row-num">12</span><div class="row-keys"><span class="key">F3</span><span class="sep">×4</span></div><span class="row-desc">문서 전체 블록</span></div>
+      <div class="row"><span class="row-num">13</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">←/→</span></div><span class="row-desc">블록 설정</span></div>
+      <div class="row"><span class="row-num">14</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">Home/End</span></div><span class="row-desc">줄 블록</span></div>
+      <div class="row"><span class="row-num">15</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">F</span></div><span class="row-desc">찾기</span></div>
+      <div class="row"><span class="row-num">16</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">H</span></div><span class="row-desc">찾아 바꾸기</span></div>
+      <div class="row"><span class="row-num">17</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">L</span></div><span class="row-desc">다시 찾기</span></div>
+      <div class="row"><span class="row-num">18</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">G</span></div><span class="row-desc">찾아가기</span></div>
+      <div class="row"><span class="row-num">19</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">G,T</span></div><span class="row-desc">문단 부호 보기</span></div>
+      <div class="row"><span class="row-num">20</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">G,C</span></div><span class="row-desc">조판 부호 보기</span></div>
+      <div class="row"><span class="row-num">21</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">G,P</span></div><span class="row-desc">화면 쪽 맞춤</span></div>
+      <div class="row"><span class="row-num">22</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">G,W</span></div><span class="row-desc">화면 폭 맞춤</span></div>
+      <div class="row"><span class="row-num">23</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">G,Q</span></div><span class="row-desc">화면 100%</span></div>
+      <div class="row"><span class="row-num">24</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">Num+/-</span></div><span class="row-desc">화면 확대/축소</span></div>
+      <div class="row"><span class="row-num">25</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">G,L</span></div><span class="row-desc">여백 없이 보기</span></div>
+      <div class="row"><span class="row-num">26</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">Tab</span></div><span class="row-desc">창 순환</span></div>
+      <div class="row"><span class="row-num">27</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Tab</span></div><span class="row-desc">문서 탭 순환</span></div>
+      <div class="row"><span class="row-num">28</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">W,M</span></div><span class="row-desc">문서 최소화</span></div>
+    </div>
+  </div>
+
+  <!-- 서식 메뉴 -->
+  <div id="sec-hwp-format" class="section s4">
+    <div class="section-head">
+      <div class="section-dot"></div>
+      <div class="section-title">서식 메뉴</div>
+      <div class="section-count">26 keys</div>
+    </div>
+    <div class="grid">
+      <div class="row"><span class="row-num">01</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">L</span></div><span class="row-desc">글자 모양</span></div>
+      <div class="row"><span class="row-num">02</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">T</span></div><span class="row-desc">문단 모양</span></div>
+      <div class="row"><span class="row-num">03</span><div class="row-keys"><span class="key">F6</span></div><span class="row-desc">스타일</span></div>
+      <div class="row"><span class="row-num">04</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">B</span></div><span class="row-desc">진하게</span></div>
+      <div class="row"><span class="row-num">05</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">I</span></div><span class="row-desc">기울임</span></div>
+      <div class="row"><span class="row-num">06</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">U</span></div><span class="row-desc">밑줄</span></div>
+      <div class="row"><span class="row-num">07</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">]</span></div><span class="row-desc">글씨 크게</span></div>
+      <div class="row"><span class="row-num">08</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">[</span></div><span class="row-desc">글씨 작게</span></div>
+      <div class="row"><span class="row-num">09</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">W/N</span></div><span class="row-desc">자간 넓게/좁게</span></div>
+      <div class="row"><span class="row-num">10</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">P/S</span></div><span class="row-desc">위/아래 첨자</span></div>
+      <div class="row"><span class="row-num">11</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">M,K</span></div><span class="row-desc">검정 글자색</span></div>
+      <div class="row"><span class="row-num">12</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">M,R</span></div><span class="row-desc">빨강 글자색</span></div>
+      <div class="row"><span class="row-num">13</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">M,B</span></div><span class="row-desc">파랑 글자색</span></div>
+      <div class="row"><span class="row-num">14</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">M,G</span></div><span class="row-desc">초록 글자색</span></div>
+      <div class="row"><span class="row-num">15</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">M,Y</span></div><span class="row-desc">노랑 글자색</span></div>
+      <div class="row"><span class="row-num">16</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">M,W</span></div><span class="row-desc">흰색 글자색</span></div>
+      <div class="row"><span class="row-num">17</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">Insert</span></div><span class="row-desc">문단 번호 삽입</span></div>
+      <div class="row"><span class="row-num">18</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">1~0</span></div><span class="row-desc">스타일 적용</span></div>
+    </div>
+    <div class="subsection">
+      <div class="subsection-label">문단 속성</div>
+      <div class="grid">
+        <div class="row"><span class="row-num">19</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">F5</span></div><span class="row-desc">첫 줄 내어쓰기</span></div>
+        <div class="row"><span class="row-num">20</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">F6</span></div><span class="row-desc">첫 줄 들여쓰기</span></div>
+        <div class="row"><span class="row-num">21</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">W</span></div><span class="row-desc">줄 간격 넓게</span></div>
+        <div class="row"><span class="row-num">22</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">Q</span></div><span class="row-desc">줄 간격 좁게</span></div>
+        <div class="row"><span class="row-num">23</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">M</span></div><span class="row-desc">양쪽 정렬</span></div>
+        <div class="row"><span class="row-num">24</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">L</span></div><span class="row-desc">왼쪽 정렬</span></div>
+        <div class="row"><span class="row-num">25</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">R</span></div><span class="row-desc">오른쪽 정렬</span></div>
+        <div class="row"><span class="row-num">26</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">C</span></div><span class="row-desc">가운데 정렬</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 입력 메뉴 -->
+  <div id="sec-hwp-input" class="section s5">
+    <div class="section-head">
+      <div class="section-dot"></div>
+      <div class="section-title">입력 메뉴</div>
+      <div class="section-count">18 keys</div>
+    </div>
+    <div class="grid">
+      <div class="row"><span class="row-num">01</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">F10</span></div><span class="row-desc">문자표</span></div>
+      <div class="row"><span class="row-num">02</span><div class="row-keys"><span class="key">F9</span></div><span class="row-desc">한글→한자 변환</span></div>
+      <div class="row"><span class="row-num">03</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">K,D</span></div><span class="row-desc">날짜/시간 문자열</span></div>
+      <div class="row"><span class="row-num">04</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">N,N</span></div><span class="row-desc">각주</span></div>
+      <div class="row"><span class="row-num">05</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">N,E</span></div><span class="row-desc">미주</span></div>
+      <div class="row"><span class="row-num">06</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">N,I</span></div><span class="row-desc">그림</span></div>
+      <div class="row"><span class="row-num">07</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">N,B</span></div><span class="row-desc">글상자</span></div>
+      <div class="row"><span class="row-num">08</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">N,M</span></div><span class="row-desc">수식</span></div>
+      <div class="row"><span class="row-num">09</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">K,B</span></div><span class="row-desc">책갈피</span></div>
+      <div class="row"><span class="row-num">10</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">K,H</span></div><span class="row-desc">하이퍼링크</span></div>
+      <div class="row"><span class="row-num">11</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">N,C</span></div><span class="row-desc">캡션 넣기</span></div>
+    </div>
+    <div class="subsection">
+      <div class="subsection-label">개체 선택 상태</div>
+      <div class="grid">
+        <div class="row"><span class="row-num">12</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">Page Up</span></div><span class="row-desc">맨 앞으로</span></div>
+        <div class="row"><span class="row-num">13</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">Page Dn</span></div><span class="row-desc">맨 뒤로</span></div>
+        <div class="row"><span class="row-num">14</span><div class="row-keys"><span class="key">G</span><span class="sep">/</span><span class="key">U</span></div><span class="row-desc">개체 묶기/풀기</span></div>
+        <div class="row"><span class="row-num">15</span><div class="row-keys"><span class="key">↑←↓→</span></div><span class="row-desc">개체 이동</span></div>
+        <div class="row"><span class="row-num">16</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">방향키</span></div><span class="row-desc">개체 크기 조정</span></div>
+        <div class="row"><span class="row-num">17</span><div class="row-keys"><span class="key">Tab</span></div><span class="row-desc">다음 개체 선택</span></div>
+        <div class="row"><span class="row-num">18</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">Tab</span></div><span class="row-desc">이전 개체 선택</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 쪽·도구·기타 -->
+  <div id="sec-hwp-page" class="section s6">
+    <div class="section-head">
+      <div class="section-dot"></div>
+      <div class="section-title">쪽 · 도구 · 기타</div>
+      <div class="section-count">16 keys</div>
+    </div>
+    <div class="grid">
+      <div class="row"><span class="row-num">01</span><div class="row-keys"><span class="key">F7</span></div><span class="row-desc">편집 용지</span></div>
+      <div class="row"><span class="row-num">02</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">N,H</span></div><span class="row-desc">머리말/꼬리말</span></div>
+      <div class="row"><span class="row-num">03</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">N,P</span></div><span class="row-desc">쪽 번호 매기기</span></div>
+      <div class="row"><span class="row-num">04</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Enter</span></div><span class="row-desc">쪽 나누기</span></div>
+      <div class="row"><span class="row-num">05</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">Enter</span></div><span class="row-desc">단 나누기</span></div>
+      <div class="row"><span class="row-num">06</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">Enter</span></div><span class="row-desc">구역 나누기</span></div>
+      <div class="row"><span class="row-num">07</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">Enter</span></div><span class="row-desc">강제 줄 나누기</span></div>
+      <div class="row"><span class="row-num">08</span><div class="row-keys"><span class="key">F8</span></div><span class="row-desc">맞춤법</span></div>
+      <div class="row"><span class="row-num">09</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">F8</span></div><span class="row-desc">빠른 교정</span></div>
+      <div class="row"><span class="row-num">10</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">F1</span></div><span class="row-desc">글자판 보기</span></div>
+      <div class="row"><span class="row-num">11</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">K,M</span></div><span class="row-desc">메일 머지 표시</span></div>
+      <div class="row"><span class="row-num">12</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">M</span></div><span class="row-desc">메일 머지 만들기</span></div>
+      <div class="row"><span class="row-num">13</span><div class="row-keys"><span class="key">F1</span></div><span class="row-desc">도움말</span></div>
+      <div class="row"><span class="row-num">14</span><div class="row-keys"><span class="key">F10</span><span class="sep">/</span><span class="key">Alt</span></div><span class="row-desc">메뉴</span></div>
+      <div class="row"><span class="row-num">15</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">F10</span></div><span class="row-desc">빠른 메뉴</span></div>
+      <div class="row"><span class="row-num">16</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">SpaceBar</span></div><span class="row-desc">고정폭 빈칸</span></div>
+    </div>
+  </div>
+
+  <!-- 표 메뉴 -->
+  <div id="sec-hwp-table" class="section s1">
+    <div class="section-head">
+      <div class="section-dot"></div>
+      <div class="section-title">표 메뉴</div>
+      <div class="section-count">16 keys</div>
+    </div>
+    <div class="grid">
+      <div class="row"><span class="row-num">01</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">N,T</span></div><span class="row-desc">표 만들기</span></div>
+      <div class="row"><span class="row-num">02</span><div class="row-keys"><span class="key">Tab</span><span class="sep">/</span><span class="key">Shift</span><span class="sep">+</span><span class="key">Tab</span></div><span class="row-desc">셀 이동 (정/역)</span></div>
+      <div class="row"><span class="row-num">03</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Enter</span></div><span class="row-desc">줄 추가</span></div>
+      <div class="row"><span class="row-num">04</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">BackSpace</span></div><span class="row-desc">줄 지우기</span></div>
+      <div class="row"><span class="row-num">05</span><div class="row-keys"><span class="key">F5</span></div><span class="row-desc">현재 셀 선택</span></div>
+      <div class="row"><span class="row-num">06</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">L/T</span></div><span class="row-desc">줄/칸 추가</span></div>
+      <div class="row"><span class="row-num">07</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">Delete</span></div><span class="row-desc">줄/칸 지우기</span></div>
+      <div class="row"><span class="row-num">08</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">H/V</span></div><span class="row-desc">가로/세로 합계</span></div>
+      <div class="row"><span class="row-num">09</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">J/B</span></div><span class="row-desc">가로/세로 평균</span></div>
+      <div class="row"><span class="row-num">10</span><div class="row-keys"><span class="key">M</span><span class="sep">/</span><span class="key">S</span></div><span class="row-desc">셀 합치기/나누기</span></div>
+      <div class="row"><span class="row-num">11</span><div class="row-keys"><span class="key">H</span><span class="sep">/</span><span class="key">W</span></div><span class="row-desc">줄 높이/너비 균등</span></div>
+      <div class="row"><span class="row-num">12</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">N,A</span></div><span class="row-desc">표 나누기</span></div>
+      <div class="row"><span class="row-num">13</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">방향키</span></div><span class="row-desc">셀 크기 조절</span></div>
+      <div class="row"><span class="row-num">14</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">Esc</span></div><span class="row-desc">표 빠져나가기</span></div>
+      <div class="row"><span class="row-num">15</span><div class="row-keys"><span class="key">F7</span><span class="sep">/</span><span class="key">F8</span></div><span class="row-desc">칸/줄 전체 블록</span></div>
+      <div class="row"><span class="row-num">16</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">N,F</span></div><span class="row-desc">계산식</span></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    한글(HWP) 단축키 참조표 · All Shortcuts · 6 Categories
+    <span class="credit">제작 · 상무고 유환수</span>
+  </div>
+
+</div></div>
+</div>
+<div class="page-container" id="page-chrome" data-bg="#0d1525">
+<div class="page-inner"><div class="wrapper" id="content-chrome">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-eyebrow">⌨️ Keyboard Reference · Google Chrome</div>
+    <div class="header-title">Chrome 단축키 <span>총정리</span></div>
+    <div class="header-sub">Google Chrome · All Shortcuts · 6 Categories · 75+ Keys</div>
+    <div class="header-chips">
+      <div class="chip" style="color:#a8c7fb;border-color:rgba(66,133,244,0.3);background:rgba(66,133,244,0.08)">🔵 탭·창 관리</div>
+      <div class="chip" style="color:#86e09e;border-color:rgba(52,168,83,0.3);background:rgba(52,168,83,0.08)">🟢 주소표시줄·검색</div>
+      <div class="chip" style="color:#f6afa8;border-color:rgba(234,67,53,0.3);background:rgba(234,67,53,0.08)">🔴 웹페이지 탐색</div>
+      <div class="chip" style="color:#fee8a0;border-color:rgba(251,188,4,0.3);background:rgba(251,188,4,0.08)">🟡 북마크·히스토리</div>
+      <div class="chip" style="color:#e1bee7;border-color:rgba(156,39,176,0.3);background:rgba(156,39,176,0.08)">🟣 개발자 도구</div>
+      <div class="chip" style="color:#80deea;border-color:rgba(0,188,212,0.3);background:rgba(0,188,212,0.08)">🔵 화면·확대·기타</div>
+    </div>
+  </div>
+
+  <!-- 탭·창 관리 -->
+  <div id="sec-chrome-tab" class="section s1">
+    <div class="section-head">
+      <div class="section-icon">🗂</div>
+      <div class="section-title">탭 · 창 관리</div>
+      <div class="section-count">18 keys</div>
+    </div>
+    <div class="section-body">
+      <div class="grid">
+        <div class="row"><span class="row-num">01</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">T</span></div><span class="row-desc">새 탭 열기</span></div>
+        <div class="row"><span class="row-num">02</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">W</span></div><span class="row-desc">현재 탭 닫기</span></div>
+        <div class="row"><span class="row-num">03</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">T</span></div><span class="row-desc">닫은 탭 다시 열기</span></div>
+        <div class="row"><span class="row-num">04</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Tab</span></div><span class="row-desc">다음 탭으로 이동</span></div>
+        <div class="row"><span class="row-num">05</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">Tab</span></div><span class="row-desc">이전 탭으로 이동</span></div>
+        <div class="row"><span class="row-num">06</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">1</span><span class="sep">~</span><span class="key">8</span></div><span class="row-desc">특정 탭으로 이동</span></div>
+        <div class="row"><span class="row-num">07</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">9</span></div><span class="row-desc">마지막 탭으로 이동</span></div>
+        <div class="row"><span class="row-num">08</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">N</span></div><span class="row-desc">새 창 열기</span></div>
+        <div class="row"><span class="row-num">09</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">N</span></div><span class="row-desc">시크릿 모드 새 창</span></div>
+        <div class="row"><span class="row-num">10</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">W</span></div><span class="row-desc">현재 창 닫기</span></div>
+        <div class="row"><span class="row-num">11</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">PgUp</span></div><span class="row-desc">탭 왼쪽으로 이동</span></div>
+        <div class="row"><span class="row-num">12</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">PgDn</span></div><span class="row-desc">탭 오른쪽으로 이동</span></div>
+        <div class="row"><span class="row-num">13</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">←</span></div><span class="row-desc">이전 페이지로</span></div>
+        <div class="row"><span class="row-num">14</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">→</span></div><span class="row-desc">다음 페이지로</span></div>
+        <div class="row"><span class="row-num">15</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">Home</span></div><span class="row-desc">홈페이지 열기</span></div>
+        <div class="row"><span class="row-num">16</span><div class="row-keys"><span class="key">F11</span></div><span class="row-desc">전체 화면 모드 토글</span></div>
+        <div class="row"><span class="row-num">17</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">M</span></div><span class="row-desc">다른 사용자로 전환</span></div>
+        <div class="row"><span class="row-num">18</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">Esc</span></div><span class="row-desc">Chrome 작업 관리자</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 주소표시줄·검색 -->
+  <div id="sec-chrome-addr" class="section s2">
+    <div class="section-head">
+      <div class="section-icon">🔍</div>
+      <div class="section-title">주소 표시줄 · 검색</div>
+      <div class="section-count">11 keys</div>
+    </div>
+    <div class="section-body">
+      <div class="grid">
+        <div class="row"><span class="row-num">19</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">L</span><span class="sep">/</span><span class="key">F6</span><span class="sep">/</span><span class="key">Alt</span><span class="sep">+</span><span class="key">D</span></div><span class="row-desc">주소 표시줄로 이동</span></div>
+        <div class="row"><span class="row-num">20</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">K</span><span class="sep">/</span><span class="key">E</span></div><span class="row-desc">페이지 어디서나 검색</span></div>
+        <div class="row"><span class="row-num">21</span><div class="row-keys"><span class="key">사이트명</span><span class="sep">+</span><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Enter</span></div><span class="row-desc">www. · .com 자동완성 후 열기</span></div>
+        <div class="row"><span class="row-num">22</span><div class="row-keys"><span class="key">검색어</span><span class="sep">+</span><span class="key">Alt</span><span class="sep">+</span><span class="key">Enter</span></div><span class="row-desc">새 탭에서 검색</span></div>
+        <div class="row"><span class="row-num">23</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">F</span><span class="sep">/</span><span class="key">F3</span></div><span class="row-desc">페이지 내 찾기</span></div>
+        <div class="row"><span class="row-num">24</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">G</span></div><span class="row-desc">다음 검색 결과로</span></div>
+        <div class="row"><span class="row-num">25</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">G</span></div><span class="row-desc">이전 검색 결과로</span></div>
+        <div class="row"><span class="row-num">26</span><div class="row-keys"><span class="key">Esc</span></div><span class="row-desc">페이지 로드 중지 / 닫기</span></div>
+        <div class="row"><span class="row-num">27</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Enter</span></div><span class="row-desc">주소창 이동 (www/.com)</span></div>
+        <div class="row"><span class="row-num">28</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">F</span><span class="sep">/</span><span class="key">E</span></div><span class="row-desc">Chrome 메뉴 열기</span></div>
+        <div class="row"><span class="row-num">29</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">U</span></div><span class="row-desc">페이지 소스 보기</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 웹페이지 탐색 -->
+  <div id="sec-chrome-nav" class="section s3">
+    <div class="section-head">
+      <div class="section-icon">📄</div>
+      <div class="section-title">웹페이지 탐색 · 스크롤</div>
+      <div class="section-count">14 keys</div>
+    </div>
+    <div class="section-body">
+      <div class="grid">
+        <div class="row"><span class="row-num">30</span><div class="row-keys"><span class="key">F5</span><span class="sep">/</span><span class="key">Ctrl</span><span class="sep">+</span><span class="key">R</span></div><span class="row-desc">페이지 새로고침</span></div>
+        <div class="row"><span class="row-num">31</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">F5</span><span class="sep">/</span><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">R</span></div><span class="row-desc">캐시 무시 새로고침</span></div>
+        <div class="row"><span class="row-num">32</span><div class="row-keys"><span class="key">Space</span><span class="sep">/</span><span class="key">PgDn</span></div><span class="row-desc">한 화면 아래로 스크롤</span></div>
+        <div class="row"><span class="row-num">33</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">Space</span><span class="sep">/</span><span class="key">PgUp</span></div><span class="row-desc">한 화면 위로 스크롤</span></div>
+        <div class="row"><span class="row-num">34</span><div class="row-keys"><span class="key">Home</span></div><span class="row-desc">페이지 맨 위로</span></div>
+        <div class="row"><span class="row-num">35</span><div class="row-keys"><span class="key">End</span></div><span class="row-desc">페이지 맨 아래로</span></div>
+        <div class="row"><span class="row-num">36</span><div class="row-keys"><span class="key">Tab</span></div><span class="row-desc">클릭 항목 앞으로 탐색</span></div>
+        <div class="row"><span class="row-num">37</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">Tab</span></div><span class="row-desc">클릭 항목 뒤로 탐색</span></div>
+        <div class="row"><span class="row-num">38</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">P</span></div><span class="row-desc">페이지 인쇄</span></div>
+        <div class="row"><span class="row-num">39</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">S</span></div><span class="row-desc">페이지 저장</span></div>
+        <div class="row"><span class="row-num">40</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">A</span></div><span class="row-desc">페이지 전체 선택</span></div>
+        <div class="row"><span class="row-num">41</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">C</span></div><span class="row-desc">선택 텍스트 복사</span></div>
+        <div class="row"><span class="row-num">42</span><div class="row-keys"><span class="key">F7</span></div><span class="row-desc">캐럿 브라우징 켜기</span></div>
+        <div class="row"><span class="row-num">43</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">O</span></div><span class="row-desc">파일 열기</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 북마크·히스토리 -->
+  <div id="sec-chrome-bookmark" class="section s4">
+    <div class="section-head">
+      <div class="section-icon">⭐</div>
+      <div class="section-title">북마크 · 히스토리 · 다운로드</div>
+      <div class="section-count">10 keys</div>
+    </div>
+    <div class="section-body">
+      <div class="grid">
+        <div class="row"><span class="row-num">44</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">D</span></div><span class="row-desc">현재 페이지 북마크 저장</span></div>
+        <div class="row"><span class="row-num">45</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">D</span></div><span class="row-desc">열린 모든 탭 북마크 저장</span></div>
+        <div class="row"><span class="row-num">46</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">O</span></div><span class="row-desc">북마크 관리자 열기</span></div>
+        <div class="row"><span class="row-num">47</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">B</span></div><span class="row-desc">북마크 바 표시/숨기기</span></div>
+        <div class="row"><span class="row-num">48</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">B</span></div><span class="row-desc">북마크 바로 포커스 이동</span></div>
+        <div class="row"><span class="row-num">49</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">H</span></div><span class="row-desc">방문 기록 페이지 열기</span></div>
+        <div class="row"><span class="row-num">50</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">J</span></div><span class="row-desc">다운로드 페이지 열기</span></div>
+        <div class="row"><span class="row-num">51</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">Del</span></div><span class="row-desc">인터넷 사용 기록 삭제</span></div>
+        <div class="row"><span class="row-num">52</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">J</span></div><span class="row-desc">다운로드 폴더 열기</span></div>
+        <div class="row"><span class="row-num">53</span><div class="row-keys"><span class="key">F1</span></div><span class="row-desc">Chrome 고객센터 열기</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 개발자 도구 -->
+  <div id="sec-chrome-devtools" class="section s5">
+    <div class="section-head">
+      <div class="section-icon">🛠</div>
+      <div class="section-title">개발자 도구 (DevTools)</div>
+      <div class="section-count">12 keys</div>
+    </div>
+    <div class="section-body">
+      <div class="grid">
+        <div class="row"><span class="row-num">54</span><div class="row-keys"><span class="key">F12</span><span class="sep">/</span><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">I</span></div><span class="row-desc">개발자 도구 열기</span></div>
+        <div class="row"><span class="row-num">55</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">J</span></div><span class="row-desc">콘솔 패널 열기</span></div>
+        <div class="row"><span class="row-num">56</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">C</span></div><span class="row-desc">요소 검사 (검사 모드)</span></div>
+        <div class="row"><span class="row-num">57</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">U</span></div><span class="row-desc">페이지 소스 코드 보기</span></div>
+        <div class="row"><span class="row-num">58</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">P</span></div><span class="row-desc">명령 팔레트 (DevTools)</span></div>
+        <div class="row"><span class="row-num">59</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">[</span><span class="sep">/</span><span class="key">]</span></div><span class="row-desc">DevTools 패널 이동</span></div>
+        <div class="row"><span class="row-num">60</span><div class="row-keys"><span class="key">F8</span></div><span class="row-desc">스크립트 실행 일시정지</span></div>
+        <div class="row"><span class="row-num">61</span><div class="row-keys"><span class="key">F10</span></div><span class="row-desc">Step Over (한 줄 실행)</span></div>
+        <div class="row"><span class="row-num">62</span><div class="row-keys"><span class="key">F11</span></div><span class="row-desc">Step Into (함수 진입)</span></div>
+        <div class="row"><span class="row-num">63</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">F11</span></div><span class="row-desc">Step Out (함수 나가기)</span></div>
+        <div class="row"><span class="row-num">64</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">M</span></div><span class="row-desc">모바일 에뮬레이션 토글</span></div>
+        <div class="row"><span class="row-num">65</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">F5</span></div><span class="row-desc">주소 표시줄로 커서 이동</span></div>
+      </div>
+      <div class="note-box">개발자 도구(F12)는 Elements·Console·Network·Sources·Performance 탭을 제공하며, Ctrl+Shift+P로 명령 팔레트를 열면 빠르게 기능을 검색할 수 있어요.</div>
+    </div>
+  </div>
+
+  <!-- 화면·확대·기타 -->
+  <div id="sec-chrome-view" class="section s6">
+    <div class="section-head">
+      <div class="section-icon">🔭</div>
+      <div class="section-title">화면 · 확대·축소 · 기타</div>
+      <div class="section-count">12 keys</div>
+    </div>
+    <div class="section-body">
+      <div class="grid">
+        <div class="row"><span class="row-num">66</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">+</span></div><span class="row-desc">페이지 확대</span></div>
+        <div class="row"><span class="row-num">67</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">-</span></div><span class="row-desc">페이지 축소</span></div>
+        <div class="row"><span class="row-num">68</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">0</span></div><span class="row-desc">기본 배율로 되돌리기</span></div>
+        <div class="row"><span class="row-num">69</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">+</span></div><span class="row-desc">글꼴 크기 증가</span></div>
+        <div class="row"><span class="row-num">70</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">I</span></div><span class="row-desc">의견 제출 양식 열기</span></div>
+        <div class="row"><span class="row-num">71</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">U</span></div><span class="row-desc">유니코드 입력 (Linux)</span></div>
+        <div class="row"><span class="row-num">72</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">Alt</span><span class="sep">+</span><span class="key">N</span></div><span class="row-desc">분할 뷰 열기</span></div>
+        <div class="row"><span class="row-num">73</span><div class="row-keys"><span class="key">Shift</span><span class="sep">+</span><span class="key">Alt</span><span class="sep">+</span><span class="key">T</span></div><span class="row-desc">툴바 첫 항목 포커스</span></div>
+        <div class="row"><span class="row-num">74</span><div class="row-keys"><span class="key">Alt</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">A</span></div><span class="row-desc">비활성 대화상자 포커스</span></div>
+        <div class="row"><span class="row-num">75</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">F6</span></div><span class="row-desc">웹 콘텐츠로 건너뛰기</span></div>
+        <div class="row"><span class="row-num">76</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Shift</span><span class="sep">+</span><span class="key">F</span></div><span class="row-desc">전체 화면 전환</span></div>
+        <div class="row"><span class="row-num">77</span><div class="row-keys"><span class="key">Ctrl</span><span class="sep">+</span><span class="key">Z</span><span class="sep">/</span><span class="key">Y</span></div><span class="row-desc">실행 취소 / 다시 실행</span></div>
+      </div>
+      <div class="subsection">
+        <div class="subsection-label">주소창 입력 꿀팁</div>
+        <div class="grid">
+          <div class="row"><span class="row-num">+</span><div class="row-keys"><span class="key">chrome://flags</span></div><span class="row-desc">실험적 기능 설정</span></div>
+          <div class="row"><span class="row-num">+</span><div class="row-keys"><span class="key">chrome://settings</span></div><span class="row-desc">Chrome 설정</span></div>
+          <div class="row"><span class="row-num">+</span><div class="row-keys"><span class="key">chrome://extensions</span></div><span class="row-desc">확장 프로그램 관리</span></div>
+          <div class="row"><span class="row-num">+</span><div class="row-keys"><span class="key">chrome://downloads</span></div><span class="row-desc">다운로드 관리</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-text">Google Chrome 단축키 참조표 · 6 Categories · 77 Keys</div>
+    <div class="footer-credit">제작 · <span>상무고 유환수</span></div>
+  </div>
+
+</div></div>
+</div>
+
+
+  <div class="global-footer">
+    제작 &nbsp;&nbsp; <strong>상무고 유환수</strong>
+  </div>
+</div>
+
+<button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="맨 위로">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+    <polyline points="18 15 12 9 6 15"/>
+  </svg>
+</button>
+
+<script>
+// === PARTICLES ===
+(function() {
+  const container = document.getElementById('introParticles');
+  const colors = ['#0ea5e9','#a855f7','#f97316','#10b981','#3b82f6','#f59e0b'];
+  for (let i = 0; i < 50; i++) {
+    const p = document.createElement('div');
+    p.className = 'intro-particle';
+    const size = Math.random() * 4 + 1;
+    const c = colors[Math.floor(Math.random() * colors.length)];
+    p.style.cssText = `
+      left:${Math.random()*100}%;
+      width:${size}px; height:${size}px;
+      background:${c};
+      --drift:${(Math.random()-0.5)*120}px;
+      animation-duration:${Math.random()*8+5}s;
+      animation-delay:${Math.random()*6}s;
+      box-shadow:0 0 ${size*3}px ${c};
+    `;
+    container.appendChild(p);
+  }
+})();
+
+
+function goToPage(pageId) {
+  dismissIntro();
+  setTimeout(() => showPage(pageId), 200);
+}
+
+function dismissIntro() {
+  const intro = document.getElementById('intro-screen');
+  const app = document.getElementById('main-app');
+  intro.classList.add('fade-out');
+  app.classList.add('visible');
+}
+
+function returnToIntro() {
+  const app = document.getElementById('main-app');
+  app.classList.remove('visible');
+
+  // Re-create intro
+  const existing = document.getElementById('intro-screen');
+  if (existing) {
+    existing.classList.remove('fade-out');
+    existing.style.display = '';
+    // Re-trigger animations by forcing reflow
+    const content = existing.querySelector('.intro-content');
+    if (content) {
+      const clone = content.cloneNode(true);
+      content.replaceWith(clone);
+      clone.querySelectorAll('.intro-nav-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const pid = this.getAttribute('data-pid');
+          if (pid) goToPage(pid);
+        });
+      });
+    }
+  }
+}
+
+// === PAGE NAVIGATION ===
+const pageBgs = {
+  win: '#0f1923', excel: '#0a1a14', ppt: '#111318',
+  hwp: '#0d0f14', chrome: '#0d1525'
+};
+
+function showPage(pageId) {
+  document.querySelectorAll('.page-container').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  
+  const page = document.getElementById('page-' + pageId);
+  const btn = document.querySelector(`.tab-btn[data-page="${pageId}"]`);
+  
+  if (page) {
+    page.classList.add('active');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+  if (btn) btn.classList.add('active');
+  
+  document.getElementById('main-app').style.background = pageBgs[pageId] || '#0f1923';
+}
+
+// Show first page
+showPage('win');
+
+// === CLEAN UP OLD PAGE BUTTONS ===
+document.querySelectorAll('.page-inner .btn, .page-inner .btn-print, .page-inner .btn-img').forEach(el => el.remove());
+document.querySelectorAll('.page-inner button').forEach(el => {
+  const oc = el.getAttribute('onclick') || '';
+  const id = el.id || '';
+  if (oc.includes('print') || oc.includes('save') || oc.includes('Save') || id.toLowerCase().includes('save')) {
+    el.remove();
+  }
+});
+
+// === BACK TO TOP ===
+window.addEventListener('scroll', () => {
+  const btn = document.getElementById('back-top');
+  btn.classList.toggle('visible', window.scrollY > 400);
+});
+</script>
+</body>
+</html>
